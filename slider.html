@@ -645,11 +645,11 @@
                     <h4>💰 Current Assets</h4>
                     <div class="input-group">
                         <label>Current EPF Balance (RM)</label>
-                        <input type="number" id="currentEPF" value="100000" oninput="updateRetirement()">
+                        <input type="number" id="currentEPF" value="6000" oninput="updateRetirement()">
                     </div>
                     <div class="input-group">
                         <label>Current Other Savings (RM)</label>
-                        <input type="number" id="currentSavings" value="20000" oninput="updateRetirement()">
+                        <input type="number" id="currentSavings" value="10000" oninput="updateRetirement()">
                     </div>
 
                     <div class="phase-badge" style="background:#dcfce7; color:#166534; margin-top:20px;">Phase 1: Age 33 - 40</div>
@@ -665,7 +665,7 @@
                     <div class="input-group">
                         <label>Split: Diversified Investment %: <span id="splitVal" class="slider-val">50%</span></label>
                         <div class="slider-container">
-                            <input type="range" id="splitRate" min="0" max="100" value="50" oninput="updateRetirement()">
+                            <input type="range" id="splitRate" min="0" max="100" value="60" oninput="updateRetirement()">
                         </div>
                         <small style="color:#64748b">Remaining % goes to Voluntary EPF</small>
                     </div>
@@ -683,7 +683,7 @@
                     <div class="input-group">
                         <label>Monthly Net Flow (40+): <span id="post40FlowVal" class="slider-val">RM0</span></label>
                         <div class="slider-container">
-                            <input type="range" id="post40Flow" min="-5000" max="10000" step="500" value="0" oninput="updateRetirement()">
+                            <input type="range" id="post40Flow" min="-5000" max="10000" step="500" value="-1500" oninput="updateRetirement()">
                         </div>
                         <small style="color:#64748b">
                             <span style="color:#10b981">(+) Saving</span> vs <span style="color:#ef4444">(-) Withdrawing</span>

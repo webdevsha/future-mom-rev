@@ -847,6 +847,7 @@
             // Logic: Total * (90 / 100)
             // This calculates the remaining money after removing the 10% cost
             const netMonthly = totalMonthly * ((100 - costs) / 100);
+            const costMonthly = totalMonthly * ((costs) / 100);
             
             globalNetMonthly = netMonthly; // Save for retirement calc
 
@@ -879,7 +880,7 @@
             const insights = [
                 `<strong>Live Adjustment:</strong> You are simulating a monthly revenue of ${formatRM(totalMonthly)}.`,
                 `<strong>Recurring Base:</strong> ${recurringPercent}% of this income comes from Training Members & Family AI subscriptions.`,
-                `<strong>Profit Margin:</strong> After deducting of ${costs.toLocaleString()}% cost, you keep ${formatRM(netMonthly)}/mo.`,
+                `<strong>Profit Margin:</strong> After deducting of ${costs.toLocaleString()}% cost (${formatRM(costMonthly)}, you keep ${formatRM(netMonthly)}/mo.`,
                 `<strong>Corporate Leverage:</strong> Corporate deals provide high cash injections (setup fees) to fuel investments.`,
                 `<strong>Diversification:</strong> Even if one stream drops to 0, others sustain the cash flow.`
             ];

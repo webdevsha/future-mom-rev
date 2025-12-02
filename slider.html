@@ -657,7 +657,7 @@
                     <div class="input-group">
                         <label>Save % of Net Profit: <span id="saveRateVal" class="slider-val">50%</span></label>
                         <div class="slider-container">
-                            <input type="range" id="saveRate" min="10" max="90" value="10" oninput="updateRetirement()">
+                            <input type="range" id="saveRate" min="10" max="90" value="50" oninput="updateRetirement()">
                         </div>
                         <small style="color:#64748b">Amount: <span id="monthlyContributionDisplay">RM0</span>/mo</small>
                     </div>
@@ -740,10 +740,10 @@
         // Data presets (used for quick fill)
         const scenarios = {
             conservative: {
-                dev1: 12, dev2: 8,
-                trainMembers: 20, trainWorkshops: 2,
-                aiBasic: 50, aiPremium: 15, aiHubs: 3,
-                lib: 1, school: 0, consult: 1,
+                dev1: 12, dev2: 0,
+                trainMembers: 20, trainWorkshops: 1,
+                aiBasic: 0, aiPremium: 10, aiHubs: 0,
+                lib: 1, school: 0, consult: 0,
                 hours: 25
             },
             moderate: {

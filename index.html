@@ -1,0 +1,460 @@
+import React, { useState } from 'react';
+import { DollarSign, Users, GraduationCap, BookOpen, Building2, TrendingUp } from 'lucide-react';
+
+export default function ComprehensiveRevenueModel() {
+  const [scenario, setScenario] = useState('conservative');
+  
+  const myrToUsd = 0.22;
+  
+  // Revenue Stream Configurations
+  const streams = {
+    conservative: {
+      name: 'Conservative (New Mom, Sustainable)',
+      // Stream 1: Custom Development
+      dev1Feature: 12, // projects/month @ RM500
+      dev2Features: 8, // projects/month @ RM750
+      
+      // Stream 2: Monthly Training
+      trainingMembers: 20, // paying @ RM129/month
+      uniWorkshops: 2, // per quarter @ RM2000 each
+      
+      // Stream 3: Private AI for Families (Cetalabs)
+      familyAIBasic: 50, // @ RM15/month
+      familyAIPremium: 15, // @ RM50/month
+      communityHubs: 3, // @ RM400/month
+      
+      // Stream 4: Corporate/Institutional AI Deployment
+      libraryDeployments: 1, // per quarter @ RM15000 setup + RM2000/month
+      schoolDeployments: 0, // per quarter @ RM10000 setup + RM1500/month
+      corporateConsulting: 1, // per quarter @ RM8000
+      
+      // Hours allocation
+      weeklyHours: 25
+    },
+    
+    moderate: {
+      name: 'Moderate (Kids 2-3 Years, Growing)',
+      dev1Feature: 20,
+      dev2Features: 15,
+      
+      trainingMembers: 50,
+      uniWorkshops: 4,
+      
+      familyAIBasic: 150,
+      familyAIPremium: 40,
+      communityHubs: 8,
+      
+      libraryDeployments: 2,
+      schoolDeployments: 1,
+      corporateConsulting: 2,
+      
+      weeklyHours: 30
+    },
+    
+    ambitious: {
+      name: 'Ambitious (Hire Help, Scale)',
+      dev1Feature: 25,
+      dev2Features: 20,
+      
+      trainingMembers: 100,
+      uniWorkshops: 6,
+      
+      familyAIBasic: 300,
+      familyAIPremium: 80,
+      communityHubs: 15,
+      
+      libraryDeployments: 3,
+      schoolDeployments: 2,
+      corporateConsulting: 4,
+      
+      weeklyHours: 35
+    }
+  };
+  
+  const current = streams[scenario];
+  
+  // Calculate Monthly Revenue
+  
+  // Stream 1: Custom Development
+  const devRevenue = (current.dev1Feature * 500) + (current.dev2Features * 750);
+  
+  // Stream 2: Training
+  const trainingRecurring = current.trainingMembers * 129;
+  const trainingWorkshops = (current.uniWorkshops * 2000) / 3; // quarterly spread
+  const trainingTotal = trainingRecurring + trainingWorkshops;
+  
+  // Stream 3: Private AI (Cetalabs Family Platform)
+  const familyAIRevenue = (current.familyAIBasic * 15) + 
+                          (current.familyAIPremium * 50) + 
+                          (current.communityHubs * 400);
+  
+  // Stream 4: Corporate/Institutional
+  const librarySetup = (current.libraryDeployments * 15000) / 3; // quarterly spread
+  const libraryRecurring = (current.libraryDeployments * 2000);
+  const schoolSetup = (current.schoolDeployments * 10000) / 3;
+  const schoolRecurring = (current.schoolDeployments * 1500);
+  const consulting = (current.corporateConsulting * 8000) / 3;
+  const corporateTotal = librarySetup + libraryRecurring + schoolSetup + schoolRecurring + consulting;
+  
+  const totalMonthly = devRevenue + trainingTotal + familyAIRevenue + corporateTotal;
+  const totalYearly = totalMonthly * 12;
+  
+  // Costs
+  const costs = {
+    infrastructure: 500, // Higher for AI hosting
+    tools: 500,
+    moderation: 1000,
+    aiModels: 1000, // Model hosting costs
+    legal + corporate secretary: 500,
+    marketing: 1000,
+    misc: 500
+  };
+  
+  const totalCosts = Object.values(costs).reduce((a, b) => a + b, 0);
+  const netMonthly = totalMonthly - totalCosts;
+  const netYearly = netMonthly * 12;
+  
+  // Breakdown percentages
+  const devPercent = (devRevenue / totalMonthly * 100).toFixed(1);
+  const trainingPercent = (trainingTotal / totalMonthly * 100).toFixed(1);
+  const familyAIPercent = (familyAIRevenue / totalMonthly * 100).toFixed(1);
+  const corporatePercent = (corporateTotal / totalMonthly * 100).toFixed(1);
+  
+  return (
+    <div className="w-full max-w-7xl mx-auto p-6 bg-gradient-to-br from-purple-50 to-blue-50">
+      <div className="mb-8">
+        <h1 className="text-4xl font-bold text-purple-900 mb-2">
+          4-Stream Revenue Model
+        </h1>
+        <p className="text-purple-700 text-lg">
+          Custom Dev + Training + Family AI + Corporate Deployments
+        </p>
+      </div>
+      
+      {/* Scenario Selector */}
+      <div className="bg-white rounded-xl p-6 shadow-lg mb-6">
+        <label className="block text-sm font-semibold text-purple-900 mb-3">
+          Select Growth Scenario
+        </label>
+        <select
+          value={scenario}
+          onChange={(e) => setScenario(e.target.value)}
+          className="w-full px-4 py-3 border-2 border-purple-200 rounded-lg text-lg font-medium"
+        >
+          {Object.keys(streams).map(key => (
+            <option key={key} value={key}>
+              {streams[key].name}
+            </option>
+          ))}
+        </select>
+        <div className="mt-3 text-sm text-purple-600">
+          Weekly commitment: {current.weeklyHours} hours
+        </div>
+      </div>
+      
+      {/* Total Revenue Overview */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+        <div className="bg-gradient-to-br from-green-500 to-green-600 rounded-xl p-6 text-white shadow-lg">
+          <div className="text-sm opacity-90 mb-1">Monthly Revenue</div>
+          <div className="text-3xl font-bold">RM{totalMonthly.toLocaleString()}</div>
+          <div className="text-xs opacity-80 mt-1">≈ ${(totalMonthly * myrToUsd).toLocaleString()} USD</div>
+        </div>
+        
+        <div className="bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl p-6 text-white shadow-lg">
+          <div className="text-sm opacity-90 mb-1">Yearly Revenue</div>
+          <div className="text-3xl font-bold">RM{totalYearly.toLocaleString()}</div>
+          <div className="text-xs opacity-80 mt-1">≈ ${(totalYearly * myrToUsd).toLocaleString()} USD</div>
+        </div>
+        
+        <div className="bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl p-6 text-white shadow-lg">
+          <div className="text-sm opacity-90 mb-1">Net Monthly (After Costs)</div>
+          <div className="text-3xl font-bold">RM{netMonthly.toLocaleString()}</div>
+          <div className="text-xs opacity-80 mt-1">≈ ${(netMonthly * myrToUsd).toLocaleString()} USD</div>
+        </div>
+      </div>
+      
+      {/* Revenue Stream Breakdown */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+        
+        {/* Stream 1: Custom Development */}
+        <div className="bg-white rounded-xl p-6 shadow-lg border-2 border-orange-200">
+          <div className="flex items-center gap-3 mb-4">
+            <div className="bg-orange-100 p-3 rounded-lg">
+              <DollarSign className="w-6 h-6 text-orange-600" />
+            </div>
+            <div>
+              <h3 className="text-lg font-bold text-orange-900">Custom Development</h3>
+              <p className="text-sm text-orange-600">Client mini-systems</p>
+            </div>
+          </div>
+          
+          <div className="space-y-3 mb-4">
+            <div className="flex justify-between items-center bg-orange-50 p-3 rounded-lg">
+              <span className="text-sm text-orange-700">1-Feature Projects</span>
+              <div className="text-right">
+                <div className="font-bold text-orange-900">{current.dev1Feature}/month</div>
+                <div className="text-xs text-orange-600">@RM500</div>
+              </div>
+            </div>
+            
+            <div className="flex justify-between items-center bg-orange-50 p-3 rounded-lg">
+              <span className="text-sm text-orange-700">2-Feature Projects</span>
+              <div className="text-right">
+                <div className="font-bold text-orange-900">{current.dev2Features}/month</div>
+                <div className="text-xs text-orange-600">@RM750</div>
+              </div>
+            </div>
+          </div>
+          
+          <div className="pt-3 border-t-2 border-orange-200">
+            <div className="flex justify-between items-center">
+              <span className="font-semibold text-orange-900">Monthly Total</span>
+              <div className="text-right">
+                <div className="text-xl font-bold text-orange-900">RM{devRevenue.toLocaleString()}</div>
+                <div className="text-xs text-orange-600">{devPercent}% of revenue</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        {/* Stream 2: Training */}
+        <div className="bg-white rounded-xl p-6 shadow-lg border-2 border-blue-200">
+          <div className="flex items-center gap-3 mb-4">
+            <div className="bg-blue-100 p-3 rounded-lg">
+              <GraduationCap className="w-6 h-6 text-blue-600" />
+            </div>
+            <div>
+              <h3 className="text-lg font-bold text-blue-900">Training Programs</h3>
+              <p className="text-sm text-blue-600">Future interns & uni workshops</p>
+            </div>
+          </div>
+          
+          <div className="space-y-3 mb-4">
+            <div className="flex justify-between items-center bg-blue-50 p-3 rounded-lg">
+              <span className="text-sm text-blue-700">Monthly Members</span>
+              <div className="text-right">
+                <div className="font-bold text-blue-900">{current.trainingMembers} members</div>
+                <div className="text-xs text-blue-600">@RM129/month</div>
+              </div>
+            </div>
+            
+            <div className="flex justify-between items-center bg-blue-50 p-3 rounded-lg">
+              <span className="text-sm text-blue-700">University Workshops</span>
+              <div className="text-right">
+                <div className="font-bold text-blue-900">{current.uniWorkshops}/quarter</div>
+                <div className="text-xs text-blue-600">@RM2000 (min 10 pax)</div>
+              </div>
+            </div>
+          </div>
+          
+          <div className="pt-3 border-t-2 border-blue-200">
+            <div className="flex justify-between items-center">
+              <span className="font-semibold text-blue-900">Monthly Total</span>
+              <div className="text-right">
+                <div className="text-xl font-bold text-blue-900">RM{Math.round(trainingTotal).toLocaleString()}</div>
+                <div className="text-xs text-blue-600">{trainingPercent}% of revenue</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        {/* Stream 3: Family AI Platform */}
+        <div className="bg-white rounded-xl p-6 shadow-lg border-2 border-purple-200">
+          <div className="flex items-center gap-3 mb-4">
+            <div className="bg-purple-100 p-3 rounded-lg">
+              <BookOpen className="w-6 h-6 text-purple-600" />
+            </div>
+            <div>
+              <h3 className="text-lg font-bold text-purple-900">Cetalabs Family AI</h3>
+              <p className="text-sm text-purple-600">Dynamic textbooks & collective intelligence</p>
+            </div>
+          </div>
+          
+          <div className="space-y-3 mb-4">
+            <div className="flex justify-between items-center bg-purple-50 p-3 rounded-lg">
+              <span className="text-sm text-purple-700">Basic Plans</span>
+              <div className="text-right">
+                <div className="font-bold text-purple-900">{current.familyAIBasic} families</div>
+                <div className="text-xs text-purple-600">@RM15/month</div>
+              </div>
+            </div>
+            
+            <div className="flex justify-between items-center bg-purple-50 p-3 rounded-lg">
+              <span className="text-sm text-purple-700">Premium Plans</span>
+              <div className="text-right">
+                <div className="font-bold text-purple-900">{current.familyAIPremium} families</div>
+                <div className="text-xs text-purple-600">@RM50/month</div>
+              </div>
+            </div>
+            
+            <div className="flex justify-between items-center bg-purple-50 p-3 rounded-lg">
+              <span className="text-sm text-purple-700">Community Hubs</span>
+              <div className="text-right">
+                <div className="font-bold text-purple-900">{current.communityHubs} hubs</div>
+                <div className="text-xs text-purple-600">@RM400/month</div>
+              </div>
+            </div>
+          </div>
+          
+          <div className="pt-3 border-t-2 border-purple-200">
+            <div className="flex justify-between items-center">
+              <span className="font-semibold text-purple-900">Monthly Total</span>
+              <div className="text-right">
+                <div className="text-xl font-bold text-purple-900">RM{familyAIRevenue.toLocaleString()}</div>
+                <div className="text-xs text-purple-600">{familyAIPercent}% of revenue</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        {/* Stream 4: Corporate/Institutional */}
+        <div className="bg-white rounded-xl p-6 shadow-lg border-2 border-green-200">
+          <div className="flex items-center gap-3 mb-4">
+            <div className="bg-green-100 p-3 rounded-lg">
+              <Building2 className="w-6 h-6 text-green-600" />
+            </div>
+            <div>
+              <h3 className="text-lg font-bold text-green-900">Corporate Deployments</h3>
+              <p className="text-sm text-green-600">Libraries, schools, institutions</p>
+            </div>
+          </div>
+          
+          <div className="space-y-3 mb-4">
+            <div className="flex justify-between items-center bg-green-50 p-3 rounded-lg">
+              <span className="text-sm text-green-700">Library Deployments</span>
+              <div className="text-right">
+                <div className="font-bold text-green-900">{current.libraryDeployments}/quarter</div>
+                <div className="text-xs text-green-600">RM15K setup + RM2K/mo</div>
+              </div>
+            </div>
+            
+            <div className="flex justify-between items-center bg-green-50 p-3 rounded-lg">
+              <span className="text-sm text-green-700">School Deployments</span>
+              <div className="text-right">
+                <div className="font-bold text-green-900">{current.schoolDeployments}/quarter</div>
+                <div className="text-xs text-green-600">RM10K setup + RM1.5K/mo</div>
+              </div>
+            </div>
+            
+            <div className="flex justify-between items-center bg-green-50 p-3 rounded-lg">
+              <span className="text-sm text-green-700">Consulting Projects</span>
+              <div className="text-right">
+                <div className="font-bold text-green-900">{current.corporateConsulting}/quarter</div>
+                <div className="text-xs text-green-600">@RM8000</div>
+              </div>
+            </div>
+          </div>
+          
+          <div className="pt-3 border-t-2 border-green-200">
+            <div className="flex justify-between items-center">
+              <span className="font-semibold text-green-900">Monthly Total</span>
+              <div className="text-right">
+                <div className="text-xl font-bold text-green-900">RM{Math.round(corporateTotal).toLocaleString()}</div>
+                <div className="text-xs text-green-600">{corporatePercent}% of revenue</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      {/* Costs Breakdown */}
+      <div className="bg-white rounded-xl p-6 shadow-lg mb-6">
+        <h3 className="text-xl font-bold text-gray-900 mb-4">Monthly Operating Costs</h3>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-4">
+          {Object.entries(costs).map(([key, value]) => (
+            <div key={key} className="bg-gray-50 p-3 rounded-lg">
+              <div className="text-xs text-gray-600 capitalize">{key.replace(/([A-Z])/g, ' $1')}</div>
+              <div className="text-lg font-bold text-gray-900">RM{value}</div>
+            </div>
+          ))}
+        </div>
+        <div className="pt-4 border-t-2 border-gray-200">
+          <div className="flex justify-between items-center">
+            <span className="font-bold text-gray-900">Total Operating Costs</span>
+            <span className="text-2xl font-bold text-gray-900">RM{totalCosts.toLocaleString()}</span>
+          </div>
+        </div>
+      </div>
+      
+      {/* Revenue Pie Chart (Visual) */}
+      <div className="bg-white rounded-xl p-6 shadow-lg mb-6">
+        <h3 className="text-xl font-bold text-gray-900 mb-4">Revenue Mix</h3>
+        <div className="space-y-3">
+          <div>
+            <div className="flex justify-between mb-1">
+              <span className="text-sm font-medium text-orange-700">Custom Development</span>
+              <span className="text-sm font-bold text-orange-900">{devPercent}%</span>
+            </div>
+            <div className="w-full bg-gray-200 rounded-full h-3">
+              <div className="bg-orange-500 h-3 rounded-full" style={{width: `${devPercent}%`}}></div>
+            </div>
+          </div>
+          
+          <div>
+            <div className="flex justify-between mb-1">
+              <span className="text-sm font-medium text-blue-700">Training Programs</span>
+              <span className="text-sm font-bold text-blue-900">{trainingPercent}%</span>
+            </div>
+            <div className="w-full bg-gray-200 rounded-full h-3">
+              <div className="bg-blue-500 h-3 rounded-full" style={{width: `${trainingPercent}%`}}></div>
+            </div>
+          </div>
+          
+          <div>
+            <div className="flex justify-between mb-1">
+              <span className="text-sm font-medium text-purple-700">Family AI Platform</span>
+              <span className="text-sm font-bold text-purple-900">{familyAIPercent}%</span>
+            </div>
+            <div className="w-full bg-gray-200 rounded-full h-3">
+              <div className="bg-purple-500 h-3 rounded-full" style={{width: `${familyAIPercent}%`}}></div>
+            </div>
+          </div>
+          
+          <div>
+            <div className="flex justify-between mb-1">
+              <span className="text-sm font-medium text-green-700">Corporate Deployments</span>
+              <span className="text-sm font-bold text-green-900">{corporatePercent}%</span>
+            </div>
+            <div className="w-full bg-gray-200 rounded-full h-3">
+              <div className="bg-green-500 h-3 rounded-full" style={{width: `${corporatePercent}%`}}></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      {/* Key Insights */}
+      <div className="bg-gradient-to-r from-blue-50 to-purple-50 rounded-xl p-6 border-2 border-purple-200">
+        <h3 className="font-bold text-purple-900 mb-3 flex items-center gap-2">
+          <TrendingUp className="w-5 h-5" />
+          Key Insights - {current.name}
+        </h3>
+        <ul className="space-y-2 text-sm text-purple-800">
+          <li className="flex gap-2">
+            <span className="text-purple-600">•</span>
+            <span><strong>Diversified income:</strong> 4 revenue streams = stable even if one slows down</span>
+          </li>
+          <li className="flex gap-2">
+            <span className="text-purple-600">•</span>
+            <span><strong>Recurring revenue:</strong> Training ({trainingPercent}%) + Family AI ({familyAIPercent}%) = {(parseFloat(trainingPercent) + parseFloat(familyAIPercent)).toFixed(1)}% predictable monthly income</span>
+          </li>
+          <li className="flex gap-2">
+            <span className="text-purple-600">•</span>
+            <span><strong>High-margin corporate:</strong> One library deployment (RM15K setup + RM2K/mo) = significant boost every quarter</span>
+          </li>
+          <li className="flex gap-2">
+            <span className="text-purple-600">•</span>
+            <span><strong>Scalable training:</strong> {current.trainingMembers} members learning = future workforce + RM{trainingRecurring.toLocaleString()}/mo passive</span>
+          </li>
+          <li className="flex gap-2">
+            <span className="text-purple-600">•</span>
+            <span><strong>Mom-friendly:</strong> At {current.weeklyHours} hrs/week, net income RM{netMonthly.toLocaleString()}/month = sustainable with young kids</span>
+          </li>
+          <li className="flex gap-2">
+            <span className="text-purple-600">•</span>
+            <span><strong>Mission + profit:</strong> Family AI platform builds toward your Cetalabs vision while generating revenue</span>
+          </li>
+        </ul>
+      </div>
+    </div>
+  );
+}

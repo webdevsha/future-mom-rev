@@ -741,8 +741,8 @@
         const scenarios = {
             conservative: {
                 dev1: 12, dev2: 0,
-                trainMembers: 20, trainWorkshops: 1,
-                aiBasic: 0, aiPremium: 10, aiHubs: 0,
+                trainMembers: 20, trainWorkshops: 0,
+                aiBasic: 0, aiPremium: 0, aiHubs: 0,
                 lib: 1, school: 0, consult: 0,
                 hours: 25
             },
@@ -762,7 +762,7 @@
             }
         };
         
-        const costs = 7000; // Monthly costs
+        const costs = 10; // Monthly costs
         
         // Helpers
         function formatRM(num) { return 'RM' + Math.round(num).toLocaleString(); }
@@ -844,8 +844,10 @@
 
             const totalMonthly = devRevenue + trainingTotal + familyAIRevenue + corporateTotal;
             const totalYearly = totalMonthly * 12;
-            const netMonthly = totalMonthly - costs;
-
+            // Logic: Total * (90 / 100)
+            // This calculates the remaining money after removing the 10% cost
+            const netMonthly = totalMonthly * ((100 - costs) / 100);
+            
             globalNetMonthly = netMonthly; // Save for retirement calc
 
             // Update Top Cards
@@ -877,7 +879,7 @@
             const insights = [
                 `<strong>Live Adjustment:</strong> You are simulating a monthly revenue of ${formatRM(totalMonthly)}.`,
                 `<strong>Recurring Base:</strong> ${recurringPercent}% of this income comes from Training Members & Family AI subscriptions.`,
-                `<strong>Profit Margin:</strong> After RM${costs.toLocaleString()} costs, you keep ${formatRM(netMonthly)}/mo.`,
+                `<strong>Profit Margin:</strong> After deducting of ${costs.toLocaleString()}% cost, you keep ${formatRM(netMonthly)}/mo.`,
                 `<strong>Corporate Leverage:</strong> Corporate deals provide high cash injections (setup fees) to fuel investments.`,
                 `<strong>Diversification:</strong> Even if one stream drops to 0, others sustain the cash flow.`
             ];
@@ -1101,7 +1103,7 @@
             });
         }
         
-        // Initialize with default (Moderate)
+        // Initialize with default (Conservative)
         loadScenarioPreset();
     </script>
 </body>

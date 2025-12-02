@@ -1,0 +1,902 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cetalabs - Revenue & Retirement Planner</title>
+    <!-- Chart.js for the Retirement Graph -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #f5f0ff 0%, #e0f2fe 100%);
+            padding: 20px;
+            line-height: 1.6;
+            color: #1e293b;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding-bottom: 50px;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 30px 0;
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            color: #7c3aed;
+            margin-bottom: 10px;
+        }
+        
+        .subtitle {
+            font-size: 1.2rem;
+            color: #6366f1;
+        }
+        
+        /* --- Existing Styles --- */
+        .scenario-selector {
+            background: white;
+            padding: 30px;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+        }
+        
+        select {
+            width: 100%;
+            padding: 15px;
+            font-size: 1.1rem;
+            border: 2px solid #c4b5fd;
+            border-radius: 8px;
+            background: white;
+            cursor: pointer;
+        }
+        
+        .total-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .card {
+            padding: 25px;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            color: white;
+            transition: transform 0.2s;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .card-green { background: linear-gradient(135deg, #10b981 0%, #059669 100%); }
+        .card-blue { background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%); }
+        .card-purple { background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%); }
+        .card-gold { background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); }
+        
+        .card-label {
+            font-size: 0.9rem;
+            opacity: 0.9;
+            margin-bottom: 8px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .card-value {
+            font-size: 2rem;
+            font-weight: bold;
+        }
+        
+        .card-subtext {
+            font-size: 0.85rem;
+            opacity: 0.9;
+            margin-top: 5px;
+        }
+        
+        .streams {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+        
+        .stream {
+            background: white;
+            border-radius: 16px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+            border: 1px solid #e2e8f0;
+        }
+        
+        .stream-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .stream-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+        
+        .stream-orange { background: #fed7aa; border: 2px solid #fb923c; }
+        .stream-blue { background: #bfdbfe; border: 2px solid #3b82f6; }
+        .stream-purple { background: #ddd6fe; border: 2px solid #8b5cf6; }
+        .stream-green { background: #bbf7d0; border: 2px solid #10b981; }
+        
+        .stream-title { font-size: 1.3rem; font-weight: bold; }
+        .stream-subtitle { font-size: 0.9rem; color: #64748b; }
+        
+        /* Revised Metric Styling for Sliders */
+        .metric {
+            background: #f8fafc;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 12px;
+            border: 1px solid #f1f5f9;
+        }
+        
+        .metric-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .metric-label { font-size: 0.95rem; color: #475569; font-weight: 600;}
+        .metric-value { font-weight: bold; text-align: right; color: #334155; }
+        .metric-subtext { font-size: 0.8rem; color: #94a3b8; font-weight: normal;}
+
+        .metric-slider {
+            width: 100%;
+            height: 6px;
+            background: #e2e8f0;
+            border-radius: 5px;
+            outline: none;
+            -webkit-appearance: none;
+            cursor: pointer;
+        }
+
+        .metric-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: transform 0.1s;
+        }
+
+        /* Color code sliders */
+        .stream-orange .metric-slider::-webkit-slider-thumb { background: #ea580c; }
+        .stream-blue .metric-slider::-webkit-slider-thumb { background: #2563eb; }
+        .stream-purple .metric-slider::-webkit-slider-thumb { background: #7c3aed; }
+        .stream-green .metric-slider::-webkit-slider-thumb { background: #059669; }
+        
+        .stream-total {
+            border-top: 2px solid #e2e8f0;
+            padding-top: 15px;
+            margin-top: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .total-label { font-weight: 600; font-size: 1.05rem; }
+        .total-value { font-size: 1.5rem; font-weight: bold; }
+        .total-percent { font-size: 0.85rem; color: #64748b; }
+        
+        .insights {
+            background: linear-gradient(135deg, #eff6ff 0%, #f5f3ff 100%);
+            border: 2px solid #c4b5fd;
+            border-radius: 16px;
+            padding: 30px;
+            margin-top: 30px;
+        }
+        
+        .insights h3 {
+            color: #7c3aed;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .insights ul { list-style: none; }
+        .insights li { margin-bottom: 12px; padding-left: 25px; position: relative; }
+        .insights li:before {
+            content: "•"; color: #8b5cf6; font-weight: bold; position: absolute; left: 0;
+        }
+
+        /* --- RETIREMENT CALCULATOR STYLES --- */
+        .retirement-section {
+            margin-top: 50px;
+            padding-top: 40px;
+            border-top: 3px dashed #cbd5e1;
+        }
+
+        .retirement-container {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 30px;
+            background: white;
+            padding: 30px;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        .control-panel h4 {
+            color: #475569;
+            margin-bottom: 15px;
+            font-size: 1.1rem;
+            border-bottom: 2px solid #f1f5f9;
+            padding-bottom: 10px;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        .input-group label {
+            display: block;
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-bottom: 5px;
+            color: #64748b;
+        }
+
+        .input-group input[type="number"] {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            font-size: 1rem;
+        }
+
+        .slider-container {
+            margin-top: 10px;
+        }
+
+        input[type="range"] {
+            width: 100%;
+            height: 6px;
+            background: #e2e8f0;
+            border-radius: 5px;
+            outline: none;
+            -webkit-appearance: none;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 20px;
+            height: 20px;
+            background: #7c3aed;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: background .15s ease-in-out;
+        }
+
+        .slider-val {
+            float: right;
+            color: #7c3aed;
+            font-weight: bold;
+        }
+
+        .chart-container {
+            background: #f8fafc;
+            border-radius: 12px;
+            padding: 20px;
+            height: 400px;
+            position: relative;
+        }
+
+        @media (max-width: 1024px) {
+            .retirement-container { grid-template-columns: 1fr; }
+        }
+        
+        @media (max-width: 768px) {
+            h1 { font-size: 1.8rem; }
+            .streams { grid-template-columns: 1fr; }
+            .total-cards { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Cetalabs Revenue Model</h1>
+            <p class="subtitle">4 Streams • Sustainable Growth • Mom-Friendly</p>
+        </header>
+        
+        <div class="scenario-selector">
+            <label style="display: block; margin-bottom: 10px; font-weight: 600;">Select Growth Scenario (Quick Fill):</label>
+            <select id="scenario" onchange="loadScenarioPreset()">
+                <option value="conservative">Conservative (New Mom, Sustainable)</option>
+                <option value="moderate" selected>Moderate (Kids 2-3 Years, Growing)</option>
+                <option value="ambitious">Ambitious (Hire Help, Scale)</option>
+            </select>
+            <p id="hours" style="margin-top: 10px; color: #64748b; font-size: 0.9rem;">
+                ℹ️ Tip: Adjust the sliders below to customize your workload.
+            </p>
+        </div>
+        
+        <div class="total-cards">
+            <div class="card card-green">
+                <div class="card-label">Monthly Revenue</div>
+                <div class="card-value" id="monthlyRevenue">RM0</div>
+                <div class="card-subtext" id="monthlyUSD">≈ $0 USD</div>
+            </div>
+            
+            <div class="card card-blue">
+                <div class="card-label">Yearly Revenue</div>
+                <div class="card-value" id="yearlyRevenue">RM0</div>
+                <div class="card-subtext" id="yearlyUSD">≈ $0 USD</div>
+            </div>
+            
+            <div class="card card-purple">
+                <div class="card-label">Net Monthly (After Costs)</div>
+                <div class="card-value" id="netMonthly">RM0</div>
+                <div class="card-subtext" id="netUSD">≈ $0 USD</div>
+            </div>
+        </div>
+        
+        <div class="streams">
+            <!-- Stream 1: Custom Development -->
+            <div class="stream stream-orange">
+                <div class="stream-header">
+                    <div class="stream-icon stream-orange">💻</div>
+                    <div>
+                        <div class="stream-title" style="color: #ea580c;">Custom Development</div>
+                        <div class="stream-subtitle">Client mini-systems</div>
+                    </div>
+                </div>
+                
+                <div class="metric">
+                    <div class="metric-row">
+                        <span class="metric-label">1-Feature Projects <span class="metric-subtext">(@RM500)</span></span>
+                        <span class="metric-value" id="dev1Val">0/mo</span>
+                    </div>
+                    <input type="range" class="metric-slider" id="dev1Input" min="0" max="40" oninput="calculateAll()">
+                </div>
+                
+                <div class="metric">
+                    <div class="metric-row">
+                        <span class="metric-label">2-Feature Projects <span class="metric-subtext">(@RM750)</span></span>
+                        <span class="metric-value" id="dev2Val">0/mo</span>
+                    </div>
+                    <input type="range" class="metric-slider" id="dev2Input" min="0" max="30" oninput="calculateAll()">
+                </div>
+                
+                <div class="stream-total">
+                    <span class="total-label">Monthly Total</span>
+                    <div>
+                        <div class="total-value" style="color: #ea580c;" id="devTotal">RM0</div>
+                        <div class="total-percent" id="devPercent">0%</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Stream 2: Training -->
+            <div class="stream stream-blue">
+                <div class="stream-header">
+                    <div class="stream-icon stream-blue">🎓</div>
+                    <div>
+                        <div class="stream-title" style="color: #2563eb;">Training Programs</div>
+                        <div class="stream-subtitle">Future interns & uni workshops</div>
+                    </div>
+                </div>
+                
+                <div class="metric">
+                    <div class="metric-row">
+                        <span class="metric-label">Monthly Members <span class="metric-subtext">(@RM129)</span></span>
+                        <span class="metric-value" id="trainMembersVal">0 members</span>
+                    </div>
+                    <input type="range" class="metric-slider" id="trainMembersInput" min="0" max="200" oninput="calculateAll()">
+                </div>
+                
+                <div class="metric">
+                    <div class="metric-row">
+                        <span class="metric-label">Uni Workshops <span class="metric-subtext">(@RM2000/qtr)</span></span>
+                        <span class="metric-value" id="trainWorkshopsVal">0/qtr</span>
+                    </div>
+                    <input type="range" class="metric-slider" id="trainWorkshopsInput" min="0" max="12" oninput="calculateAll()">
+                </div>
+                
+                <div class="stream-total">
+                    <span class="total-label">Monthly Total</span>
+                    <div>
+                        <div class="total-value" style="color: #2563eb;" id="trainTotal">RM0</div>
+                        <div class="total-percent" id="trainPercent">0%</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Stream 3: Family AI -->
+            <div class="stream stream-purple">
+                <div class="stream-header">
+                    <div class="stream-icon stream-purple">📚</div>
+                    <div>
+                        <div class="stream-title" style="color: #7c3aed;">Cetalabs Family AI</div>
+                        <div class="stream-subtitle">Dynamic textbooks & collective intelligence</div>
+                    </div>
+                </div>
+                
+                <div class="metric">
+                    <div class="metric-row">
+                        <span class="metric-label">Basic Plans <span class="metric-subtext">(@RM15)</span></span>
+                        <span class="metric-value" id="aiBasicVal">0 families</span>
+                    </div>
+                    <input type="range" class="metric-slider" id="aiBasicInput" min="0" max="1000" step="10" oninput="calculateAll()">
+                </div>
+                
+                <div class="metric">
+                    <div class="metric-row">
+                        <span class="metric-label">Premium Plans <span class="metric-subtext">(@RM50)</span></span>
+                        <span class="metric-value" id="aiPremiumVal">0 families</span>
+                    </div>
+                    <input type="range" class="metric-slider" id="aiPremiumInput" min="0" max="300" step="5" oninput="calculateAll()">
+                </div>
+                
+                <div class="metric">
+                    <div class="metric-row">
+                        <span class="metric-label">Community Hubs <span class="metric-subtext">(@RM400)</span></span>
+                        <span class="metric-value" id="aiHubsVal">0 hubs</span>
+                    </div>
+                    <input type="range" class="metric-slider" id="aiHubsInput" min="0" max="30" oninput="calculateAll()">
+                </div>
+                
+                <div class="stream-total">
+                    <span class="total-label">Monthly Total</span>
+                    <div>
+                        <div class="total-value" style="color: #7c3aed;" id="aiTotal">RM0</div>
+                        <div class="total-percent" id="aiPercent">0%</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Stream 4: Corporate -->
+            <div class="stream stream-green">
+                <div class="stream-header">
+                    <div class="stream-icon stream-green">🏢</div>
+                    <div>
+                        <div class="stream-title" style="color: #059669;">Corporate Deployments</div>
+                        <div class="stream-subtitle">Libraries, schools, institutions</div>
+                    </div>
+                </div>
+                
+                <div class="metric">
+                    <div class="metric-row">
+                        <span class="metric-label">Library <span class="metric-subtext">(RM15K setup + RM2K/mo)</span></span>
+                        <span class="metric-value" id="corpLibVal">0/qtr</span>
+                    </div>
+                    <input type="range" class="metric-slider" id="corpLibInput" min="0" max="10" oninput="calculateAll()">
+                </div>
+                
+                <div class="metric">
+                    <div class="metric-row">
+                        <span class="metric-label">School <span class="metric-subtext">(RM10K setup + RM1.5K/mo)</span></span>
+                        <span class="metric-value" id="corpSchoolVal">0/qtr</span>
+                    </div>
+                    <input type="range" class="metric-slider" id="corpSchoolInput" min="0" max="10" oninput="calculateAll()">
+                </div>
+                
+                <div class="metric">
+                    <div class="metric-row">
+                        <span class="metric-label">Consulting <span class="metric-subtext">(@RM8000/qtr)</span></span>
+                        <span class="metric-value" id="corpConsultVal">0/qtr</span>
+                    </div>
+                    <input type="range" class="metric-slider" id="corpConsultInput" min="0" max="10" oninput="calculateAll()">
+                </div>
+                
+                <div class="stream-total">
+                    <span class="total-label">Monthly Total</span>
+                    <div>
+                        <div class="total-value" style="color: #059669;" id="corpTotal">RM0</div>
+                        <div class="total-percent" id="corpPercent">0%</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="insights">
+            <h3>📈 Key Insights</h3>
+            <ul id="insightsList"></ul>
+        </div>
+
+        <!-- RETIREMENT SECTION -->
+        <div class="retirement-section">
+            <header>
+                <h1>Road to Soft Retirement (Age 40)</h1>
+                <p class="subtitle">Current Age: 33 • Target: 40 • Goal: RM 500k - RM 1 Mil</p>
+            </header>
+
+            <div class="retirement-container">
+                <!-- Inputs -->
+                <div class="control-panel">
+                    <h4>💰 Current Assets</h4>
+                    <div class="input-group">
+                        <label>Current EPF Balance (RM)</label>
+                        <input type="number" id="currentEPF" value="100000" oninput="updateRetirement()">
+                    </div>
+                    <div class="input-group">
+                        <label>Current Other Savings (RM)</label>
+                        <input type="number" id="currentSavings" value="20000" oninput="updateRetirement()">
+                    </div>
+
+                    <h4>⚙️ Strategy (Monthly)</h4>
+                    <div class="input-group">
+                        <label>Save % of Net Profit: <span id="saveRateVal" class="slider-val">50%</span></label>
+                        <div class="slider-container">
+                            <input type="range" id="saveRate" min="10" max="90" value="50" oninput="updateRetirement()">
+                        </div>
+                        <small style="color:#64748b">Amount: <span id="monthlyContributionDisplay">RM0</span>/mo</small>
+                    </div>
+
+                    <div class="input-group">
+                        <label>Split: Diversified Investment %: <span id="splitVal" class="slider-val">50%</span></label>
+                        <div class="slider-container">
+                            <input type="range" id="splitRate" min="0" max="100" value="50" oninput="updateRetirement()">
+                        </div>
+                        <small style="color:#64748b">Remaining % goes to Voluntary EPF</small>
+                    </div>
+
+                    <h4>📈 Returns (Annual)</h4>
+                    <div class="input-group">
+                        <label>EPF Dividend Rate: <span id="epfReturnVal" class="slider-val">5.5%</span></label>
+                        <input type="range" id="epfReturn" min="3" max="7" step="0.1" value="5.5" oninput="updateRetirement()">
+                    </div>
+                    <div class="input-group">
+                        <label>Diversified Return Rate: <span id="invReturnVal" class="slider-val">8%</span></label>
+                        <input type="range" id="invReturn" min="1" max="15" step="0.5" value="8" oninput="updateRetirement()">
+                    </div>
+                </div>
+
+                <!-- Results & Chart -->
+                <div class="results-panel">
+                    <div class="total-cards" style="grid-template-columns: 1fr 1fr; margin-bottom: 20px;">
+                        <div class="card card-gold">
+                            <div class="card-label">Projected Total @ 40</div>
+                            <div class="card-value" id="projectedTotal">RM0</div>
+                            <div class="card-subtext" id="projectedBreakdown">EPF: 0 | Cash: 0</div>
+                        </div>
+                        <div class="card" style="background: white; color: #1e293b; border: 1px solid #e2e8f0;">
+                            <div class="card-label" style="color:#64748b">Status</div>
+                            <div class="card-value" id="statusText" style="font-size: 1.5rem; color: #7c3aed;">Calculating...</div>
+                            <div class="card-subtext" id="statusSub">Gap to RM 1 Mil: RM0</div>
+                        </div>
+                    </div>
+                    
+                    <div class="chart-container">
+                        <canvas id="retirementChart"></canvas>
+                    </div>
+                    <p style="margin-top:15px; font-size: 0.9rem; color: #64748b; text-align: center;">
+                        *Projection assumes consistent revenue based on current sliders.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        const myrToUsd = 0.22;
+        let globalNetMonthly = 0; // Shared variable for retirement calc
+        let retirementChartInstance = null;
+        
+        // Data presets (used for quick fill)
+        const scenarios = {
+            conservative: {
+                dev1: 12, dev2: 8,
+                trainMembers: 20, trainWorkshops: 2,
+                aiBasic: 50, aiPremium: 15, aiHubs: 3,
+                lib: 1, school: 0, consult: 1,
+                hours: 25
+            },
+            moderate: {
+                dev1: 20, dev2: 15,
+                trainMembers: 50, trainWorkshops: 4,
+                aiBasic: 150, aiPremium: 40, aiHubs: 8,
+                lib: 2, school: 1, consult: 2,
+                hours: 30
+            },
+            ambitious: {
+                dev1: 25, dev2: 20,
+                trainMembers: 100, trainWorkshops: 6,
+                aiBasic: 300, aiPremium: 80, aiHubs: 15,
+                lib: 3, school: 2, consult: 4,
+                hours: 35
+            }
+        };
+        
+        const costs = 7000; // Monthly costs
+        
+        // Helpers
+        function formatRM(num) { return 'RM' + Math.round(num).toLocaleString(); }
+        function formatUSD(num) { return '≈ $' + Math.round(num * myrToUsd).toLocaleString() + ' USD'; }
+        
+        // 1. Load Preset into Sliders (called on dropdown change)
+        function loadScenarioPreset() {
+            const scenario = document.getElementById('scenario').value;
+            const data = scenarios[scenario];
+            
+            // Set input values
+            document.getElementById('dev1Input').value = data.dev1;
+            document.getElementById('dev2Input').value = data.dev2;
+            document.getElementById('trainMembersInput').value = data.trainMembers;
+            document.getElementById('trainWorkshopsInput').value = data.trainWorkshops;
+            document.getElementById('aiBasicInput').value = data.aiBasic;
+            document.getElementById('aiPremiumInput').value = data.aiPremium;
+            document.getElementById('aiHubsInput').value = data.aiHubs;
+            document.getElementById('corpLibInput').value = data.lib;
+            document.getElementById('corpSchoolInput').value = data.school;
+            document.getElementById('corpConsultInput').value = data.consult;
+
+            // Trigger calc
+            calculateAll();
+        }
+
+        // 2. Main Calc Function (called on slider change or preset load)
+        function calculateAll() {
+            // Read Inputs
+            const dev1 = parseInt(document.getElementById('dev1Input').value);
+            const dev2 = parseInt(document.getElementById('dev2Input').value);
+            const trainMembers = parseInt(document.getElementById('trainMembersInput').value);
+            const trainWorkshops = parseInt(document.getElementById('trainWorkshopsInput').value);
+            const aiBasic = parseInt(document.getElementById('aiBasicInput').value);
+            const aiPremium = parseInt(document.getElementById('aiPremiumInput').value);
+            const aiHubs = parseInt(document.getElementById('aiHubsInput').value);
+            const corpLib = parseInt(document.getElementById('corpLibInput').value);
+            const corpSchool = parseInt(document.getElementById('corpSchoolInput').value);
+            const corpConsult = parseInt(document.getElementById('corpConsultInput').value);
+
+            // Update Text Displays next to sliders
+            document.getElementById('dev1Val').textContent = `${dev1}/mo`;
+            document.getElementById('dev2Val').textContent = `${dev2}/mo`;
+            document.getElementById('trainMembersVal').textContent = `${trainMembers} members`;
+            document.getElementById('trainWorkshopsVal').textContent = `${trainWorkshops}/qtr`;
+            document.getElementById('aiBasicVal').textContent = `${aiBasic} families`;
+            document.getElementById('aiPremiumVal').textContent = `${aiPremium} families`;
+            document.getElementById('aiHubsVal').textContent = `${aiHubs} hubs`;
+            document.getElementById('corpLibVal').textContent = `${corpLib}/qtr`;
+            document.getElementById('corpSchoolVal').textContent = `${corpSchool}/qtr`;
+            document.getElementById('corpConsultVal').textContent = `${corpConsult}/qtr`;
+
+            // Revenue Math
+            const devRevenue = (dev1 * 500) + (dev2 * 750);
+            const trainingRecurring = trainMembers * 129;
+            const trainingWorkshopsRev = (trainWorkshops * 2000) / 3;
+            const trainingTotal = trainingRecurring + trainingWorkshopsRev;
+            const familyAIRevenue = (aiBasic * 15) + (aiPremium * 50) + (aiHubs * 400);
+            
+            // Corporate Math (Divided by 3 for monthly avg of quarterly goals)
+            const librarySetup = (corpLib * 15000) / 3;
+            const libraryRecurring = corpLib * 2000; // Simplified assumption: cumulative active libraries = current quarterly goal for simplicity, or treated as new. 
+            // Note: For revenue projection, we treat 'corpLib' slider as "Active Deployments" generating recurring revenue + new setup revenue averaged.
+            // Actually, usually sliders represent "Sales velocity". Let's assume the slider is "New sales per quarter".
+            // But to make the calculator simple for monthly income, let's assume the recurring revenue builds up. 
+            // For this specific static view, let's assume the slider represents "Active Paying Clients" for recurring + "New Sales" for setup.
+            // To keep it conservative, let's treat the slider as "New Deals per Quarter" which implies setup fees. 
+            // *Correction*: To make the numbers match previous logic, we treat it as New Deals/Quarter.
+            // Recurring revenue usually lags. Let's approximate: Monthly Rev = (New Deals Setup / 3) + (New Deals * Recurring Amt).
+            
+            const corporateTotal = ((corpLib * 15000)/3) + (corpLib * 2000) + 
+                                   ((corpSchool * 10000)/3) + (corpSchool * 1500) + 
+                                   ((corpConsult * 8000)/3);
+
+            const totalMonthly = devRevenue + trainingTotal + familyAIRevenue + corporateTotal;
+            const totalYearly = totalMonthly * 12;
+            const netMonthly = totalMonthly - costs;
+
+            globalNetMonthly = netMonthly; // Save for retirement calc
+
+            // Update Top Cards
+            document.getElementById('monthlyRevenue').textContent = formatRM(totalMonthly);
+            document.getElementById('monthlyUSD').textContent = formatUSD(totalMonthly);
+            document.getElementById('yearlyRevenue').textContent = formatRM(totalYearly);
+            document.getElementById('yearlyUSD').textContent = formatUSD(totalYearly);
+            document.getElementById('netMonthly').textContent = formatRM(netMonthly);
+            document.getElementById('netUSD').textContent = formatUSD(netMonthly);
+
+            // Update Section Totals
+            document.getElementById('devTotal').textContent = formatRM(devRevenue);
+            document.getElementById('devPercent').textContent = totalMonthly > 0 ? `${(devRevenue/totalMonthly*100).toFixed(1)}%` : '0%';
+            
+            document.getElementById('trainTotal').textContent = formatRM(trainingTotal);
+            document.getElementById('trainPercent').textContent = totalMonthly > 0 ? `${(trainingTotal/totalMonthly*100).toFixed(1)}%` : '0%';
+            
+            document.getElementById('aiTotal').textContent = formatRM(familyAIRevenue);
+            document.getElementById('aiPercent').textContent = totalMonthly > 0 ? `${(familyAIRevenue/totalMonthly*100).toFixed(1)}%` : '0%';
+            
+            document.getElementById('corpTotal').textContent = formatRM(corporateTotal);
+            document.getElementById('corpPercent').textContent = totalMonthly > 0 ? `${(corporateTotal/totalMonthly*100).toFixed(1)}%` : '0%';
+
+            // Update Insights
+            const recurringPercent = totalMonthly > 0 ? ((trainingRecurring + familyAIRevenue) / totalMonthly * 100).toFixed(1) : 0;
+            const insights = [
+                `<strong>Live Adjustment:</strong> You are simulating a monthly revenue of ${formatRM(totalMonthly)}.`,
+                `<strong>Recurring Base:</strong> ${recurringPercent}% of this income comes from Training Members & Family AI subscriptions.`,
+                `<strong>Profit Margin:</strong> After RM${costs.toLocaleString()} costs, you keep ${formatRM(netMonthly)}/mo.`,
+                `<strong>Corporate Leverage:</strong> Corporate deals provide high cash injections (setup fees) to fuel investments.`,
+                `<strong>Diversification:</strong> Even if one stream drops to 0, others sustain the cash flow.`
+            ];
+            document.getElementById('insightsList').innerHTML = insights.map(i => `<li>${i}</li>`).join('');
+
+            // Recalculate Retirement
+            updateRetirement();
+        }
+
+        /* --- RETIREMENT LOGIC --- */
+        function updateRetirement() {
+            // Get Inputs
+            const currentEPF = parseFloat(document.getElementById('currentEPF').value) || 0;
+            const currentSavings = parseFloat(document.getElementById('currentSavings').value) || 0;
+            
+            // Sliders
+            const saveRate = parseInt(document.getElementById('saveRate').value);
+            const splitRate = parseInt(document.getElementById('splitRate').value); // % going to Investments
+            const epfReturn = parseFloat(document.getElementById('epfReturn').value);
+            const invReturn = parseFloat(document.getElementById('invReturn').value);
+
+            // Update UI Labels
+            document.getElementById('saveRateVal').textContent = saveRate + '%';
+            document.getElementById('splitVal').textContent = splitRate + '%';
+            document.getElementById('epfReturnVal').textContent = epfReturn + '%';
+            document.getElementById('invReturnVal').textContent = invReturn + '%';
+
+            // Calculate Contributions
+            // Guard against negative net income
+            const safeNetMonthly = globalNetMonthly > 0 ? globalNetMonthly : 0;
+            const totalMonthlySavings = safeNetMonthly * (saveRate / 100);
+            const monthlyToInv = totalMonthlySavings * (splitRate / 100);
+            const monthlyToEPF = totalMonthlySavings - monthlyToInv;
+
+            document.getElementById('monthlyContributionDisplay').textContent = formatRM(totalMonthlySavings);
+
+            // Projection Loop (7 Years = 84 Months)
+            const months = 84; 
+            const labels = [];
+            const epfData = [];
+            const invData = [];
+            
+            let balEPF = currentEPF;
+            let balInv = currentSavings;
+
+            const epfMonthlyRate = epfReturn / 100 / 12;
+            const invMonthlyRate = invReturn / 100 / 12;
+
+            for (let i = 0; i <= months; i++) {
+                if (i % 12 === 0) {
+                    labels.push((33 + (i/12)).toString()); 
+                }
+
+                if (i > 0) {
+                    balEPF += monthlyToEPF;
+                    balInv += monthlyToInv;
+                    balEPF += balEPF * epfMonthlyRate;
+                    balInv += balInv * invMonthlyRate;
+                }
+                
+                if (i % 12 === 0) {
+                    epfData.push(Math.round(balEPF));
+                    invData.push(Math.round(balInv));
+                }
+            }
+
+            const finalTotal = balEPF + balInv;
+
+            // Update Results UI
+            document.getElementById('projectedTotal').textContent = formatRM(finalTotal);
+            document.getElementById('projectedBreakdown').textContent = `EPF: ${formatRM(balEPF)} | Div. Inv: ${formatRM(balInv)}`;
+
+            // Status Logic
+            const gap = 1000000 - finalTotal;
+            const statusEl = document.getElementById('statusText');
+            const subEl = document.getElementById('statusSub');
+
+            if (finalTotal >= 1000000) {
+                statusEl.textContent = "🎉 Millionaire Status!";
+                statusEl.style.color = "#059669";
+                subEl.textContent = "Surplus: " + formatRM(finalTotal - 1000000);
+            } else if (finalTotal >= 500000) {
+                statusEl.textContent = "✅ Soft Retirement Ready";
+                statusEl.style.color = "#2563eb";
+                subEl.textContent = "Gap to 1 Mil: " + formatRM(gap);
+            } else {
+                statusEl.textContent = "🔨 Keep Building";
+                statusEl.style.color = "#ea580c";
+                subEl.textContent = "Gap to 500k: " + formatRM(500000 - finalTotal);
+            }
+
+            renderChart(labels, epfData, invData);
+        }
+
+        function renderChart(labels, epfData, invData) {
+            const ctx = document.getElementById('retirementChart').getContext('2d');
+            
+            if (retirementChartInstance) {
+                retirementChartInstance.destroy();
+            }
+
+            retirementChartInstance = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [
+                        {
+                            label: 'EPF Balance',
+                            data: epfData,
+                            backgroundColor: '#6366f1',
+                            stack: 'Stack 0',
+                        },
+                        {
+                            label: 'Diversified Inv.',
+                            data: invData,
+                            backgroundColor: '#10b981',
+                            stack: 'Stack 0',
+                        },
+                        {
+                            label: 'Target (500k)',
+                            data: Array(labels.length).fill(500000),
+                            type: 'line',
+                            borderColor: '#f59e0b',
+                            borderWidth: 2,
+                            borderDash: [5, 5],
+                            pointRadius: 0
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        x: {
+                            title: { display: true, text: 'Age' },
+                            grid: { display: false }
+                        },
+                        y: {
+                            ticks: {
+                                callback: function(value) { return 'RM' + value/1000 + 'k'; }
+                            }
+                        }
+                    },
+                    plugins: {
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    let label = context.dataset.label || '';
+                                    if (label) { label += ': '; }
+                                    if (context.parsed.y !== null) {
+                                        label += formatRM(context.parsed.y);
+                                    }
+                                    return label;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+        
+        // Initialize with default (Moderate)
+        loadScenarioPreset();
+    </script>
+</body>
+</html>

@@ -27,10 +27,10 @@
             padding-bottom: 50px;
         }
         
-        header {
+        header.main-header {
             text-align: center;
-            margin-bottom: 40px;
-            padding: 30px 0;
+            margin-bottom: 30px;
+            padding: 20px 0;
         }
         
         h1 {
@@ -42,6 +42,78 @@
         .subtitle {
             font-size: 1.2rem;
             color: #6366f1;
+        }
+
+        /* --- Collapsible Section Styles --- */
+        .section-header {
+            background: white;
+            border-radius: 16px;
+            padding: 20px 30px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-bottom: 20px;
+            border: 2px solid transparent;
+        }
+
+        .section-header:hover {
+            border-color: #c4b5fd;
+            transform: translateY(-2px);
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .header-title {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #1e293b;
+            margin: 0;
+        }
+
+        .header-summary {
+            font-size: 1.1rem;
+            color: #64748b;
+            background: #f1f5f9;
+            padding: 5px 15px;
+            border-radius: 20px;
+            opacity: 0; /* Hidden by default when expanded */
+            transition: opacity 0.3s;
+        }
+
+        .header-summary.visible {
+            opacity: 1;
+        }
+
+        .toggle-icon {
+            font-size: 1.5rem;
+            color: #7c3aed;
+            transition: transform 0.3s ease;
+        }
+
+        .collapsed .toggle-icon {
+            transform: rotate(-90deg);
+        }
+
+        /* Container for the content to be hidden */
+        .collapsible-content {
+            transition: max-height 0.5s ease-out, opacity 0.3s ease-out;
+            max-height: 5000px; /* Arbitrary large height for animation */
+            opacity: 1;
+            overflow: hidden;
+        }
+
+        .collapsed + .collapsible-content {
+            max-height: 0;
+            opacity: 0;
+            margin: 0;
+            padding: 0;
         }
         
         /* --- Existing Styles --- */
@@ -86,6 +158,7 @@
         .card-blue { background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%); }
         .card-purple { background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%); }
         .card-gold { background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); }
+        .card-dark { background: linear-gradient(135deg, #475569 0%, #1e293b 100%); }
         
         .card-label {
             font-size: 0.9rem;
@@ -147,7 +220,6 @@
         .stream-title { font-size: 1.3rem; font-weight: bold; }
         .stream-subtitle { font-size: 0.9rem; color: #64748b; }
         
-        /* Revised Metric Styling for Sliders */
         .metric {
             background: #f8fafc;
             padding: 15px;
@@ -229,9 +301,7 @@
 
         /* --- RETIREMENT CALCULATOR STYLES --- */
         .retirement-section {
-            margin-top: 50px;
-            padding-top: 40px;
-            border-top: 3px dashed #cbd5e1;
+            margin-top: 30px;
         }
 
         .retirement-container {
@@ -250,6 +320,11 @@
             font-size: 1.1rem;
             border-bottom: 2px solid #f1f5f9;
             padding-bottom: 10px;
+            margin-top: 20px;
+        }
+
+        .control-panel h4:first-child {
+            margin-top: 0;
         }
 
         .input-group {
@@ -301,11 +376,23 @@
             font-weight: bold;
         }
 
+        .phase-badge {
+            background: #e0e7ff;
+            color: #4338ca;
+            font-size: 0.75rem;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-weight: bold;
+            text-transform: uppercase;
+            margin-bottom: 5px;
+            display: inline-block;
+        }
+
         .chart-container {
             background: #f8fafc;
             border-radius: 12px;
             padding: 20px;
-            height: 400px;
+            height: 500px;
             position: relative;
         }
 
@@ -317,221 +404,244 @@
             h1 { font-size: 1.8rem; }
             .streams { grid-template-columns: 1fr; }
             .total-cards { grid-template-columns: 1fr; }
+            .section-header { flex-direction: column; align-items: flex-start; gap: 10px; }
+            .toggle-icon { position: absolute; right: 20px; top: 25px; }
+            .section-header { position: relative; }
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <header>
+        <header class="main-header">
             <h1>Cetalabs Revenue Model</h1>
             <p class="subtitle">4 Streams • Sustainable Growth • Mom-Friendly</p>
+            <a href="https://webdevsha.github.io/future-mom-rev/">Main page</a>
         </header>
-        
-        <div class="scenario-selector">
-            <label style="display: block; margin-bottom: 10px; font-weight: 600;">Select Growth Scenario (Quick Fill):</label>
-            <select id="scenario" onchange="loadScenarioPreset()">
-                <option value="conservative">Conservative (New Mom, Sustainable)</option>
-                <option value="moderate" selected>Moderate (Kids 2-3 Years, Growing)</option>
-                <option value="ambitious">Ambitious (Hire Help, Scale)</option>
-            </select>
-            <p id="hours" style="margin-top: 10px; color: #64748b; font-size: 0.9rem;">
-                ℹ️ Tip: Adjust the sliders below to customize your workload.
-            </p>
-        </div>
-        
-        <div class="total-cards">
-            <div class="card card-green">
-                <div class="card-label">Monthly Revenue</div>
-                <div class="card-value" id="monthlyRevenue">RM0</div>
-                <div class="card-subtext" id="monthlyUSD">≈ $0 USD</div>
+
+        <!-- REVENUE SECTION WRAPPER -->
+        <div id="revenueSection">
+            <!-- Header / Toggle -->
+            <div class="section-header" id="revenueHeader" onclick="toggleRevenue()">
+                <div class="header-left">
+                    <h2 class="header-title">📊 Revenue Configuration</h2>
+                    <!-- Summary only shows when collapsed -->
+                    <div class="header-summary" id="revenueHeaderSummary">
+                        Net Monthly: <strong id="headerNetVal">RM0</strong>
+                    </div>
+                </div>
+                <div class="toggle-icon">▼</div>
             </div>
             
-            <div class="card card-blue">
-                <div class="card-label">Yearly Revenue</div>
-                <div class="card-value" id="yearlyRevenue">RM0</div>
-                <div class="card-subtext" id="yearlyUSD">≈ $0 USD</div>
+            <!-- Collapsible Body -->
+            <div class="collapsible-content">
+                <div class="scenario-selector">
+                    <label style="display: block; margin-bottom: 10px; font-weight: 600;">Select Growth Scenario (Quick Fill):</label>
+                    <select id="scenario" onchange="loadScenarioPreset()">
+                        <option value="conservative">Conservative (New Mom, Sustainable)</option>
+                        <option value="moderate" selected>Moderate (Kids 2-3 Years, Growing)</option>
+                        <option value="ambitious">Ambitious (Hire Help, Scale)</option>
+                    </select>
+                    <p id="hours" style="margin-top: 10px; color: #64748b; font-size: 0.9rem;">
+                        ℹ️ Tip: Adjust the sliders below to customize your workload.
+                    </p>
+                </div>
+                
+                <div class="total-cards">
+                    <div class="card card-green">
+                        <div class="card-label">Monthly Revenue</div>
+                        <div class="card-value" id="monthlyRevenue">RM0</div>
+                        <div class="card-subtext" id="monthlyUSD">≈ $0 USD</div>
+                    </div>
+                    
+                    <div class="card card-blue">
+                        <div class="card-label">Yearly Revenue</div>
+                        <div class="card-value" id="yearlyRevenue">RM0</div>
+                        <div class="card-subtext" id="yearlyUSD">≈ $0 USD</div>
+                    </div>
+                    
+                    <div class="card card-purple">
+                        <div class="card-label">Net Monthly (After Costs)</div>
+                        <div class="card-value" id="netMonthly">RM0</div>
+                        <div class="card-subtext" id="netUSD">≈ $0 USD</div>
+                    </div>
+                </div>
+                
+                <div class="streams">
+                    <!-- Stream 1: Custom Development -->
+                    <div class="stream stream-orange">
+                        <div class="stream-header">
+                            <div class="stream-icon stream-orange">💻</div>
+                            <div>
+                                <div class="stream-title" style="color: #ea580c;">Custom Development</div>
+                                <div class="stream-subtitle">Client mini-systems</div>
+                            </div>
+                        </div>
+                        
+                        <div class="metric">
+                            <div class="metric-row">
+                                <span class="metric-label">1-Feature Projects <span class="metric-subtext">(@RM500)</span></span>
+                                <span class="metric-value" id="dev1Val">0/mo</span>
+                            </div>
+                            <input type="range" class="metric-slider" id="dev1Input" min="0" max="40" oninput="calculateAll()">
+                        </div>
+                        
+                        <div class="metric">
+                            <div class="metric-row">
+                                <span class="metric-label">2-Feature Projects <span class="metric-subtext">(@RM750)</span></span>
+                                <span class="metric-value" id="dev2Val">0/mo</span>
+                            </div>
+                            <input type="range" class="metric-slider" id="dev2Input" min="0" max="30" oninput="calculateAll()">
+                        </div>
+                        
+                        <div class="stream-total">
+                            <span class="total-label">Monthly Total</span>
+                            <div>
+                                <div class="total-value" style="color: #ea580c;" id="devTotal">RM0</div>
+                                <div class="total-percent" id="devPercent">0%</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Stream 2: Training -->
+                    <div class="stream stream-blue">
+                        <div class="stream-header">
+                            <div class="stream-icon stream-blue">🎓</div>
+                            <div>
+                                <div class="stream-title" style="color: #2563eb;">Training Programs</div>
+                                <div class="stream-subtitle">Future interns & uni workshops</div>
+                            </div>
+                        </div>
+                        
+                        <div class="metric">
+                            <div class="metric-row">
+                                <span class="metric-label">Monthly Members <span class="metric-subtext">(@RM129)</span></span>
+                                <span class="metric-value" id="trainMembersVal">0 members</span>
+                            </div>
+                            <input type="range" class="metric-slider" id="trainMembersInput" min="0" max="200" oninput="calculateAll()">
+                        </div>
+                        
+                        <div class="metric">
+                            <div class="metric-row">
+                                <span class="metric-label">Uni Workshops <span class="metric-subtext">(@RM2000/qtr)</span></span>
+                                <span class="metric-value" id="trainWorkshopsVal">0/qtr</span>
+                            </div>
+                            <input type="range" class="metric-slider" id="trainWorkshopsInput" min="0" max="12" oninput="calculateAll()">
+                        </div>
+                        
+                        <div class="stream-total">
+                            <span class="total-label">Monthly Total</span>
+                            <div>
+                                <div class="total-value" style="color: #2563eb;" id="trainTotal">RM0</div>
+                                <div class="total-percent" id="trainPercent">0%</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Stream 3: Family AI -->
+                    <div class="stream stream-purple">
+                        <div class="stream-header">
+                            <div class="stream-icon stream-purple">📚</div>
+                            <div>
+                                <div class="stream-title" style="color: #7c3aed;">Cetalabs Family AI</div>
+                                <div class="stream-subtitle">Dynamic textbooks & collective intelligence</div>
+                            </div>
+                        </div>
+                        
+                        <div class="metric">
+                            <div class="metric-row">
+                                <span class="metric-label">Basic Plans <span class="metric-subtext">(@RM15)</span></span>
+                                <span class="metric-value" id="aiBasicVal">0 families</span>
+                            </div>
+                            <input type="range" class="metric-slider" id="aiBasicInput" min="0" max="1000" step="10" oninput="calculateAll()">
+                        </div>
+                        
+                        <div class="metric">
+                            <div class="metric-row">
+                                <span class="metric-label">Premium Plans <span class="metric-subtext">(@RM50)</span></span>
+                                <span class="metric-value" id="aiPremiumVal">0 families</span>
+                            </div>
+                            <input type="range" class="metric-slider" id="aiPremiumInput" min="0" max="300" step="5" oninput="calculateAll()">
+                        </div>
+                        
+                        <div class="metric">
+                            <div class="metric-row">
+                                <span class="metric-label">Community Hubs <span class="metric-subtext">(@RM400)</span></span>
+                                <span class="metric-value" id="aiHubsVal">0 hubs</span>
+                            </div>
+                            <input type="range" class="metric-slider" id="aiHubsInput" min="0" max="30" oninput="calculateAll()">
+                        </div>
+                        
+                        <div class="stream-total">
+                            <span class="total-label">Monthly Total</span>
+                            <div>
+                                <div class="total-value" style="color: #7c3aed;" id="aiTotal">RM0</div>
+                                <div class="total-percent" id="aiPercent">0%</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Stream 4: Corporate -->
+                    <div class="stream stream-green">
+                        <div class="stream-header">
+                            <div class="stream-icon stream-green">🏢</div>
+                            <div>
+                                <div class="stream-title" style="color: #059669;">Corporate Deployments</div>
+                                <div class="stream-subtitle">Libraries, schools, institutions</div>
+                            </div>
+                        </div>
+                        
+                        <div class="metric">
+                            <div class="metric-row">
+                                <span class="metric-label">Library <span class="metric-subtext">(RM15K setup + RM2K/mo)</span></span>
+                                <span class="metric-value" id="corpLibVal">0/qtr</span>
+                            </div>
+                            <input type="range" class="metric-slider" id="corpLibInput" min="0" max="10" oninput="calculateAll()">
+                        </div>
+                        
+                        <div class="metric">
+                            <div class="metric-row">
+                                <span class="metric-label">School <span class="metric-subtext">(RM10K setup + RM1.5K/mo)</span></span>
+                                <span class="metric-value" id="corpSchoolVal">0/qtr</span>
+                            </div>
+                            <input type="range" class="metric-slider" id="corpSchoolInput" min="0" max="10" oninput="calculateAll()">
+                        </div>
+                        
+                        <div class="metric">
+                            <div class="metric-row">
+                                <span class="metric-label">Consulting <span class="metric-subtext">(@RM8000/qtr)</span></span>
+                                <span class="metric-value" id="corpConsultVal">0/qtr</span>
+                            </div>
+                            <input type="range" class="metric-slider" id="corpConsultInput" min="0" max="10" oninput="calculateAll()">
+                        </div>
+                        
+                        <div class="stream-total">
+                            <span class="total-label">Monthly Total</span>
+                            <div>
+                                <div class="total-value" style="color: #059669;" id="corpTotal">RM0</div>
+                                <div class="total-percent" id="corpPercent">0%</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="insights">
+                        <h3>📈 Key Insights</h3>
+                        <ul id="insightsList"></ul>
+                    </div>
+                </div> <!-- End Collapsible Content -->
             </div>
-            
-            <div class="card card-purple">
-                <div class="card-label">Net Monthly (After Costs)</div>
-                <div class="card-value" id="netMonthly">RM0</div>
-                <div class="card-subtext" id="netUSD">≈ $0 USD</div>
-            </div>
-        </div>
-        
-        <div class="streams">
-            <!-- Stream 1: Custom Development -->
-            <div class="stream stream-orange">
-                <div class="stream-header">
-                    <div class="stream-icon stream-orange">💻</div>
-                    <div>
-                        <div class="stream-title" style="color: #ea580c;">Custom Development</div>
-                        <div class="stream-subtitle">Client mini-systems</div>
-                    </div>
-                </div>
-                
-                <div class="metric">
-                    <div class="metric-row">
-                        <span class="metric-label">1-Feature Projects <span class="metric-subtext">(@RM500)</span></span>
-                        <span class="metric-value" id="dev1Val">0/mo</span>
-                    </div>
-                    <input type="range" class="metric-slider" id="dev1Input" min="0" max="40" oninput="calculateAll()">
-                </div>
-                
-                <div class="metric">
-                    <div class="metric-row">
-                        <span class="metric-label">2-Feature Projects <span class="metric-subtext">(@RM750)</span></span>
-                        <span class="metric-value" id="dev2Val">0/mo</span>
-                    </div>
-                    <input type="range" class="metric-slider" id="dev2Input" min="0" max="30" oninput="calculateAll()">
-                </div>
-                
-                <div class="stream-total">
-                    <span class="total-label">Monthly Total</span>
-                    <div>
-                        <div class="total-value" style="color: #ea580c;" id="devTotal">RM0</div>
-                        <div class="total-percent" id="devPercent">0%</div>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- Stream 2: Training -->
-            <div class="stream stream-blue">
-                <div class="stream-header">
-                    <div class="stream-icon stream-blue">🎓</div>
-                    <div>
-                        <div class="stream-title" style="color: #2563eb;">Training Programs</div>
-                        <div class="stream-subtitle">Future interns & uni workshops</div>
-                    </div>
-                </div>
-                
-                <div class="metric">
-                    <div class="metric-row">
-                        <span class="metric-label">Monthly Members <span class="metric-subtext">(@RM129)</span></span>
-                        <span class="metric-value" id="trainMembersVal">0 members</span>
-                    </div>
-                    <input type="range" class="metric-slider" id="trainMembersInput" min="0" max="200" oninput="calculateAll()">
-                </div>
-                
-                <div class="metric">
-                    <div class="metric-row">
-                        <span class="metric-label">Uni Workshops <span class="metric-subtext">(@RM2000/qtr)</span></span>
-                        <span class="metric-value" id="trainWorkshopsVal">0/qtr</span>
-                    </div>
-                    <input type="range" class="metric-slider" id="trainWorkshopsInput" min="0" max="12" oninput="calculateAll()">
-                </div>
-                
-                <div class="stream-total">
-                    <span class="total-label">Monthly Total</span>
-                    <div>
-                        <div class="total-value" style="color: #2563eb;" id="trainTotal">RM0</div>
-                        <div class="total-percent" id="trainPercent">0%</div>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- Stream 3: Family AI -->
-            <div class="stream stream-purple">
-                <div class="stream-header">
-                    <div class="stream-icon stream-purple">📚</div>
-                    <div>
-                        <div class="stream-title" style="color: #7c3aed;">Cetalabs Family AI</div>
-                        <div class="stream-subtitle">Dynamic textbooks & collective intelligence</div>
-                    </div>
-                </div>
-                
-                <div class="metric">
-                    <div class="metric-row">
-                        <span class="metric-label">Basic Plans <span class="metric-subtext">(@RM15)</span></span>
-                        <span class="metric-value" id="aiBasicVal">0 families</span>
-                    </div>
-                    <input type="range" class="metric-slider" id="aiBasicInput" min="0" max="1000" step="10" oninput="calculateAll()">
-                </div>
-                
-                <div class="metric">
-                    <div class="metric-row">
-                        <span class="metric-label">Premium Plans <span class="metric-subtext">(@RM50)</span></span>
-                        <span class="metric-value" id="aiPremiumVal">0 families</span>
-                    </div>
-                    <input type="range" class="metric-slider" id="aiPremiumInput" min="0" max="300" step="5" oninput="calculateAll()">
-                </div>
-                
-                <div class="metric">
-                    <div class="metric-row">
-                        <span class="metric-label">Community Hubs <span class="metric-subtext">(@RM400)</span></span>
-                        <span class="metric-value" id="aiHubsVal">0 hubs</span>
-                    </div>
-                    <input type="range" class="metric-slider" id="aiHubsInput" min="0" max="30" oninput="calculateAll()">
-                </div>
-                
-                <div class="stream-total">
-                    <span class="total-label">Monthly Total</span>
-                    <div>
-                        <div class="total-value" style="color: #7c3aed;" id="aiTotal">RM0</div>
-                        <div class="total-percent" id="aiPercent">0%</div>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- Stream 4: Corporate -->
-            <div class="stream stream-green">
-                <div class="stream-header">
-                    <div class="stream-icon stream-green">🏢</div>
-                    <div>
-                        <div class="stream-title" style="color: #059669;">Corporate Deployments</div>
-                        <div class="stream-subtitle">Libraries, schools, institutions</div>
-                    </div>
-                </div>
-                
-                <div class="metric">
-                    <div class="metric-row">
-                        <span class="metric-label">Library <span class="metric-subtext">(RM15K setup + RM2K/mo)</span></span>
-                        <span class="metric-value" id="corpLibVal">0/qtr</span>
-                    </div>
-                    <input type="range" class="metric-slider" id="corpLibInput" min="0" max="10" oninput="calculateAll()">
-                </div>
-                
-                <div class="metric">
-                    <div class="metric-row">
-                        <span class="metric-label">School <span class="metric-subtext">(RM10K setup + RM1.5K/mo)</span></span>
-                        <span class="metric-value" id="corpSchoolVal">0/qtr</span>
-                    </div>
-                    <input type="range" class="metric-slider" id="corpSchoolInput" min="0" max="10" oninput="calculateAll()">
-                </div>
-                
-                <div class="metric">
-                    <div class="metric-row">
-                        <span class="metric-label">Consulting <span class="metric-subtext">(@RM8000/qtr)</span></span>
-                        <span class="metric-value" id="corpConsultVal">0/qtr</span>
-                    </div>
-                    <input type="range" class="metric-slider" id="corpConsultInput" min="0" max="10" oninput="calculateAll()">
-                </div>
-                
-                <div class="stream-total">
-                    <span class="total-label">Monthly Total</span>
-                    <div>
-                        <div class="total-value" style="color: #059669;" id="corpTotal">RM0</div>
-                        <div class="total-percent" id="corpPercent">0%</div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        
-        <div class="insights">
-            <h3>📈 Key Insights</h3>
-            <ul id="insightsList"></ul>
         </div>
 
         <!-- RETIREMENT SECTION -->
         <div class="retirement-section">
             <header>
-                <h1>Road to Soft Retirement (Age 40)</h1>
-                <p class="subtitle">Current Age: 33 • Target: 40 • Goal: RM 500k - RM 1 Mil</p>
+                <h1>Revenue-to-Retirement Simulator</h1>
+                <p class="subtitle">Phase 1: Accumulate (33-40) • Phase 2: Soft Retire (40+)</p>
             </header>
 
             <div class="retirement-container">
                 <!-- Inputs -->
                 <div class="control-panel">
+                    <div class="phase-badge">Foundation</div>
                     <h4>💰 Current Assets</h4>
                     <div class="input-group">
                         <label>Current EPF Balance (RM)</label>
@@ -542,7 +652,8 @@
                         <input type="number" id="currentSavings" value="20000" oninput="updateRetirement()">
                     </div>
 
-                    <h4>⚙️ Strategy (Monthly)</h4>
+                    <div class="phase-badge" style="background:#dcfce7; color:#166534; margin-top:20px;">Phase 1: Age 33 - 40</div>
+                    <h4>🚀 Active Growth Strategy</h4>
                     <div class="input-group">
                         <label>Save % of Net Profit: <span id="saveRateVal" class="slider-val">50%</span></label>
                         <div class="slider-container">
@@ -559,7 +670,27 @@
                         <small style="color:#64748b">Remaining % goes to Voluntary EPF</small>
                     </div>
 
-                    <h4>📈 Returns (Annual)</h4>
+                    <div class="phase-badge" style="background:#e0f2fe; color:#0369a1; margin-top:20px;">Phase 2: Age 40+</div>
+                    <h4>🏝️ Soft Retirement Plan</h4>
+                    
+                    <div class="input-group">
+                        <label>Hard Retirement Age: <span id="hardRetireAgeVal" class="slider-val">60</span></label>
+                        <div class="slider-container">
+                            <input type="range" id="hardRetireAge" min="41" max="70" value="60" oninput="updateRetirement()">
+                        </div>
+                    </div>
+
+                    <div class="input-group">
+                        <label>Monthly Net Flow (40+): <span id="post40FlowVal" class="slider-val">RM0</span></label>
+                        <div class="slider-container">
+                            <input type="range" id="post40Flow" min="-5000" max="10000" step="500" value="0" oninput="updateRetirement()">
+                        </div>
+                        <small style="color:#64748b">
+                            <span style="color:#10b981">(+) Saving</span> vs <span style="color:#ef4444">(-) Withdrawing</span>
+                        </small>
+                    </div>
+
+                    <h4 style="margin-top:25px;">📈 Annual Returns (All Phases)</h4>
                     <div class="input-group">
                         <label>EPF Dividend Rate: <span id="epfReturnVal" class="slider-val">5.5%</span></label>
                         <input type="range" id="epfReturn" min="3" max="7" step="0.1" value="5.5" oninput="updateRetirement()">
@@ -572,16 +703,21 @@
 
                 <!-- Results & Chart -->
                 <div class="results-panel">
-                    <div class="total-cards" style="grid-template-columns: 1fr 1fr; margin-bottom: 20px;">
+                    <div class="total-cards" style="grid-template-columns: 1fr 1fr 1fr; margin-bottom: 20px;">
                         <div class="card card-gold">
-                            <div class="card-label">Projected Total @ 40</div>
-                            <div class="card-value" id="projectedTotal">RM0</div>
-                            <div class="card-subtext" id="projectedBreakdown">EPF: 0 | Cash: 0</div>
+                            <div class="card-label">Total @ Age 40</div>
+                            <div class="card-value" id="projectedTotal40">RM0</div>
+                            <div class="card-subtext">Base for Soft Retire</div>
+                        </div>
+                        <div class="card card-dark">
+                            <div class="card-label">Total @ Age <span id="targetAgeDisplay">60</span></div>
+                            <div class="card-value" id="projectedTotalFinal">RM0</div>
+                            <div class="card-subtext">Hard Retirement Pot</div>
                         </div>
                         <div class="card" style="background: white; color: #1e293b; border: 1px solid #e2e8f0;">
-                            <div class="card-label" style="color:#64748b">Status</div>
-                            <div class="card-value" id="statusText" style="font-size: 1.5rem; color: #7c3aed;">Calculating...</div>
-                            <div class="card-subtext" id="statusSub">Gap to RM 1 Mil: RM0</div>
+                            <div class="card-label" style="color:#64748b">Wealth Status</div>
+                            <div class="card-value" id="statusText" style="font-size: 1.2rem; color: #7c3aed;">Calculating...</div>
+                            <div class="card-subtext" id="statusSub">Gap to RM 1 Mil</div>
                         </div>
                     </div>
                     
@@ -589,7 +725,7 @@
                         <canvas id="retirementChart"></canvas>
                     </div>
                     <p style="margin-top:15px; font-size: 0.9rem; color: #64748b; text-align: center;">
-                        *Projection assumes consistent revenue based on current sliders.
+                        *Phase 1 assumes active income from revenue model. Phase 2 assumes simplified monthly saving/withdrawal.
                     </p>
                 </div>
             </div>
@@ -631,6 +767,22 @@
         // Helpers
         function formatRM(num) { return 'RM' + Math.round(num).toLocaleString(); }
         function formatUSD(num) { return '≈ $' + Math.round(num * myrToUsd).toLocaleString() + ' USD'; }
+
+        // --- NEW: Toggle Function ---
+        function toggleRevenue() {
+            const header = document.getElementById('revenueHeader');
+            const summary = document.getElementById('revenueHeaderSummary');
+            
+            // Toggle class on header
+            header.classList.toggle('collapsed');
+            
+            // Toggle visibility of summary text
+            if (header.classList.contains('collapsed')) {
+                summary.classList.add('visible');
+            } else {
+                summary.classList.remove('visible');
+            }
+        }
         
         // 1. Load Preset into Sliders (called on dropdown change)
         function loadScenarioPreset() {
@@ -686,17 +838,6 @@
             const trainingTotal = trainingRecurring + trainingWorkshopsRev;
             const familyAIRevenue = (aiBasic * 15) + (aiPremium * 50) + (aiHubs * 400);
             
-            // Corporate Math (Divided by 3 for monthly avg of quarterly goals)
-            const librarySetup = (corpLib * 15000) / 3;
-            const libraryRecurring = corpLib * 2000; // Simplified assumption: cumulative active libraries = current quarterly goal for simplicity, or treated as new. 
-            // Note: For revenue projection, we treat 'corpLib' slider as "Active Deployments" generating recurring revenue + new setup revenue averaged.
-            // Actually, usually sliders represent "Sales velocity". Let's assume the slider is "New sales per quarter".
-            // But to make the calculator simple for monthly income, let's assume the recurring revenue builds up. 
-            // For this specific static view, let's assume the slider represents "Active Paying Clients" for recurring + "New Sales" for setup.
-            // To keep it conservative, let's treat the slider as "New Deals per Quarter" which implies setup fees. 
-            // *Correction*: To make the numbers match previous logic, we treat it as New Deals/Quarter.
-            // Recurring revenue usually lags. Let's approximate: Monthly Rev = (New Deals Setup / 3) + (New Deals * Recurring Amt).
-            
             const corporateTotal = ((corpLib * 15000)/3) + (corpLib * 2000) + 
                                    ((corpSchool * 10000)/3) + (corpSchool * 1500) + 
                                    ((corpConsult * 8000)/3);
@@ -714,6 +855,9 @@
             document.getElementById('yearlyUSD').textContent = formatUSD(totalYearly);
             document.getElementById('netMonthly').textContent = formatRM(netMonthly);
             document.getElementById('netUSD').textContent = formatUSD(netMonthly);
+
+            // Update Header Summary
+            document.getElementById('headerNetVal').textContent = formatRM(netMonthly);
 
             // Update Section Totals
             document.getElementById('devTotal').textContent = formatRM(devRevenue);
@@ -754,15 +898,21 @@
             const splitRate = parseInt(document.getElementById('splitRate').value); // % going to Investments
             const epfReturn = parseFloat(document.getElementById('epfReturn').value);
             const invReturn = parseFloat(document.getElementById('invReturn').value);
+            
+            // Phase 2 Sliders
+            const hardRetireAge = parseInt(document.getElementById('hardRetireAge').value);
+            const post40Flow = parseInt(document.getElementById('post40Flow').value);
 
             // Update UI Labels
             document.getElementById('saveRateVal').textContent = saveRate + '%';
             document.getElementById('splitVal').textContent = splitRate + '%';
             document.getElementById('epfReturnVal').textContent = epfReturn + '%';
             document.getElementById('invReturnVal').textContent = invReturn + '%';
+            document.getElementById('hardRetireAgeVal').textContent = hardRetireAge;
+            document.getElementById('targetAgeDisplay').textContent = hardRetireAge;
+            document.getElementById('post40FlowVal').textContent = formatRM(post40Flow);
 
-            // Calculate Contributions
-            // Guard against negative net income
+            // Calculate Contributions (Phase 1)
             const safeNetMonthly = globalNetMonthly > 0 ? globalNetMonthly : 0;
             const totalMonthlySavings = safeNetMonthly * (saveRate / 100);
             const monthlyToInv = totalMonthlySavings * (splitRate / 100);
@@ -770,8 +920,16 @@
 
             document.getElementById('monthlyContributionDisplay').textContent = formatRM(totalMonthlySavings);
 
-            // Projection Loop (7 Years = 84 Months)
-            const months = 84; 
+            // Projection Loops
+            const currentAge = 33;
+            const softRetireAge = 40;
+            
+            // Phase 1 Duration (Months)
+            const monthsPhase1 = (softRetireAge - currentAge) * 12;
+            // Phase 2 Duration (Months)
+            const monthsPhase2 = (hardRetireAge - softRetireAge) * 12;
+            const totalMonths = monthsPhase1 + monthsPhase2;
+
             const labels = [];
             const epfData = [];
             const invData = [];
@@ -781,20 +939,55 @@
 
             const epfMonthlyRate = epfReturn / 100 / 12;
             const invMonthlyRate = invReturn / 100 / 12;
+            
+            let totalAt40 = 0;
 
-            for (let i = 0; i <= months; i++) {
-                if (i % 12 === 0) {
-                    labels.push((33 + (i/12)).toString()); 
-                }
-
+            for (let i = 0; i <= totalMonths; i++) {
+                const age = currentAge + (i/12);
+                
+                // Add Interest (Compounding happens every month)
                 if (i > 0) {
-                    balEPF += monthlyToEPF;
-                    balInv += monthlyToInv;
                     balEPF += balEPF * epfMonthlyRate;
                     balInv += balInv * invMonthlyRate;
+                    
+                    // Add Contributions based on Phase
+                    if (i <= monthsPhase1) {
+                        // PHASE 1: Aggressive Accumulation
+                        balEPF += monthlyToEPF;
+                        balInv += monthlyToInv;
+                    } else {
+                        // PHASE 2: Soft Retirement
+                        // Assume split of flow follows same ratio, OR mostly liquid. 
+                        // For simplicity: If positive, split according to ratio. If negative, withdraw from Investment first (liquid).
+                        if (post40Flow >= 0) {
+                            const p2Inv = post40Flow * (splitRate / 100);
+                            const p2Epf = post40Flow - p2Inv;
+                            balEPF += p2Epf;
+                            balInv += p2Inv;
+                        } else {
+                            // Withdrawal scenario (Negative flow)
+                            // Withdraw from Savings/Inv first
+                            let needed = Math.abs(post40Flow);
+                            if (balInv >= needed) {
+                                balInv -= needed;
+                            } else {
+                                // Drain Inv, then touch EPF (conceptually, though EPF has rules)
+                                needed -= balInv;
+                                balInv = 0;
+                                balEPF -= needed; // Assuming age 55 withdrawal rules etc allow this conceptually
+                            }
+                        }
+                    }
                 }
                 
+                // Record snapshot at Age 40
+                if (Math.abs(age - 40) < 0.01) {
+                    totalAt40 = balEPF + balInv;
+                }
+
+                // Data Points for Chart (Annual)
                 if (i % 12 === 0) {
+                    labels.push(Math.round(age)); 
                     epfData.push(Math.round(balEPF));
                     invData.push(Math.round(balInv));
                 }
@@ -803,37 +996,40 @@
             const finalTotal = balEPF + balInv;
 
             // Update Results UI
-            document.getElementById('projectedTotal').textContent = formatRM(finalTotal);
-            document.getElementById('projectedBreakdown').textContent = `EPF: ${formatRM(balEPF)} | Div. Inv: ${formatRM(balInv)}`;
+            document.getElementById('projectedTotal40').textContent = formatRM(totalAt40);
+            document.getElementById('projectedTotalFinal').textContent = formatRM(finalTotal);
 
-            // Status Logic
+            // Status Logic (Based on Final Total vs 1 Mil)
             const gap = 1000000 - finalTotal;
             const statusEl = document.getElementById('statusText');
             const subEl = document.getElementById('statusSub');
 
             if (finalTotal >= 1000000) {
-                statusEl.textContent = "🎉 Millionaire Status!";
+                statusEl.textContent = "🎉 Millionaire!";
                 statusEl.style.color = "#059669";
-                subEl.textContent = "Surplus: " + formatRM(finalTotal - 1000000);
+                subEl.textContent = "+" + formatRM(finalTotal - 1000000);
             } else if (finalTotal >= 500000) {
-                statusEl.textContent = "✅ Soft Retirement Ready";
+                statusEl.textContent = "✅ Secure";
                 statusEl.style.color = "#2563eb";
-                subEl.textContent = "Gap to 1 Mil: " + formatRM(gap);
+                subEl.textContent = "Gap: " + formatRM(gap);
             } else {
-                statusEl.textContent = "🔨 Keep Building";
+                statusEl.textContent = "🔨 Growing";
                 statusEl.style.color = "#ea580c";
-                subEl.textContent = "Gap to 500k: " + formatRM(500000 - finalTotal);
+                subEl.textContent = "Gap: " + formatRM(gap);
             }
 
-            renderChart(labels, epfData, invData);
+            renderChart(labels, epfData, invData, softRetireAge);
         }
 
-        function renderChart(labels, epfData, invData) {
+        function renderChart(labels, epfData, invData, softRetireAge) {
             const ctx = document.getElementById('retirementChart').getContext('2d');
             
             if (retirementChartInstance) {
                 retirementChartInstance.destroy();
             }
+            
+            // Find index where age is approx 40 to draw line
+            const index40 = labels.findIndex(l => l == 40);
 
             retirementChartInstance = new Chart(ctx, {
                 type: 'bar',
@@ -843,18 +1039,24 @@
                         {
                             label: 'EPF Balance',
                             data: epfData,
-                            backgroundColor: '#6366f1',
+                            backgroundColor: (ctx) => {
+                                const index = ctx.dataIndex;
+                                return index > index40 ? '#818cf8' : '#6366f1'; // Lighter color after 40
+                            },
                             stack: 'Stack 0',
                         },
                         {
                             label: 'Diversified Inv.',
                             data: invData,
-                            backgroundColor: '#10b981',
+                            backgroundColor: (ctx) => {
+                                const index = ctx.dataIndex;
+                                return index > index40 ? '#34d399' : '#10b981'; // Lighter color after 40
+                            },
                             stack: 'Stack 0',
                         },
                         {
-                            label: 'Target (500k)',
-                            data: Array(labels.length).fill(500000),
+                            label: 'Target (RM 1 Mil)',
+                            data: Array(labels.length).fill(1000000),
                             type: 'line',
                             borderColor: '#f59e0b',
                             borderWidth: 2,
@@ -868,7 +1070,7 @@
                     maintainAspectRatio: false,
                     scales: {
                         x: {
-                            title: { display: true, text: 'Age' },
+                            title: { display: true, text: 'Age (Phase 1 vs Phase 2)' },
                             grid: { display: false }
                         },
                         y: {
@@ -889,6 +1091,10 @@
                                     return label;
                                 }
                             }
+                        },
+                        annotation: {
+                            // Chart.js annotation plugin needed for vertical line, but omitting for standard chart.js
+                            // Using color shift to denote phase change instead.
                         }
                     }
                 }

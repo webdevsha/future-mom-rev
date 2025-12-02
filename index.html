@@ -5,20 +5,22 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>A New Decade of Joy & Deep Meaning</title>
     <link rel="icon" type="image/png" href="https://ik.imagekit.io/cbctech/favicon.png?updatedAt=1757847359360">
-        <!-- Standard Meta Description -->
-    <meta name="description" content="Shafira's holistic planner for the 'Company of One' CEO of Cetalabs. Bismillah. ">
+    
+    <!-- Standard Meta Description -->
+    <meta name="description" content="Shafira's holistic planner for the 'Company of One' CEO of Cetalabs. Bismillah.">
     
     <!-- Open Graph / Facebook / WhatsApp -->
     <meta property="og:type" content="website">
     <meta property="og:title" content="A New Decade of Joy & Deep Meaning">
-    <meta property="og:description" content="Shafira's holistic planner for the 'Company of One' CEO of Cetalabs. Bismillah. ">
+    <meta property="og:description" content="Shafira's holistic planner for the 'Company of One' CEO of Cetalabs. Bismillah.">
     <meta property="og:image" content="https://ik.imagekit.io/cbctech/Sonia%20Dubois%20Orchard%20Farm.jpg?updatedAt=1751974575468">
     
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image">
     <meta property="twitter:title" content="A New Decade of Joy & Deep Meaning">
-    <meta property="twitter:description" content="Shafira's holistic planner for the 'Company of One' CEO of Cetalabs. Bismillah. ">
+    <meta property="twitter:description" content="Shafira's holistic planner for the 'Company of One' CEO of Cetalabs. Bismillah.">
     <meta property="twitter:image" content="https://ik.imagekit.io/cbctech/Sonia%20Dubois%20Orchard%20Farm.jpg?updatedAt=1751974575468">
+
     <style>
         * {
             margin: 0;
@@ -56,6 +58,35 @@
             font-size: 1.1rem;
             color: #be185d;
             opacity: 0.8;
+            text-decoration: none;
+        }
+        
+        a:hover { text-decoration: underline; }
+
+        /* --- CONTROLS BAR (Life Stage) --- */
+        .controls-bar {
+            background: white;
+            padding: 15px 20px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 15px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+            border: 1px solid #fbcfe8;
+            flex-wrap: wrap;
+        }
+
+        .life-stage-select {
+            padding: 10px 15px;
+            border-radius: 8px;
+            border: 1px solid #db2777;
+            background: #fff0f5;
+            color: #9d174d;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 1rem;
         }
 
         /* --- COLLAPSIBLE CYCLE WIDGET --- */
@@ -202,7 +233,7 @@
         /* --- Departments --- */
         .departments-container {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); /* Slightly wider for longer OKRs */
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
             gap: 20px;
         }
 
@@ -214,13 +245,15 @@
             border-top: 5px solid #ccc;
             transition: transform 0.2s;
             height: 100%;
+            display: flex;
+            flex-direction: column;
         }
         .dept-card:hover { transform: translateY(-5px); }
         .dept-icon { font-size: 1.8rem; margin-bottom: 10px; display: block; }
         .dept-title { font-size: 1.2rem; font-weight: 700; color: #1e293b; margin-bottom: 5px; }
         .dept-focus { font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.5px; font-weight: 600; margin-bottom: 15px; display: block;}
         
-        .dept-okr-list { list-style: none; }
+        .dept-okr-list { list-style: none; margin-bottom: 20px; flex-grow: 1; }
         .dept-okr-list li {
             margin-bottom: 10px;
             font-size: 0.9rem;
@@ -228,6 +261,16 @@
             padding-left: 15px;
             border-left: 2px solid #e2e8f0;
         }
+
+        .creative-win-box {
+            background: #fdf4ff;
+            border: 1px dashed #d946ef;
+            border-radius: 10px;
+            padding: 12px;
+            margin-top: auto;
+        }
+        .win-title { font-size: 0.75rem; font-weight: bold; color: #a21caf; text-transform: uppercase; display: block; margin-bottom: 5px; }
+        .win-text { font-size: 0.9rem; color: #86198f; font-style: italic; }
         
         .dept-biz { border-color: #f59e0b; } .dept-biz .dept-focus { color: #d97706; }
         .dept-self { border-color: #10b981; } .dept-self .dept-focus { color: #059669; }
@@ -272,7 +315,6 @@
             overflow: hidden;
         }
 
-        /* Dynamic Adjustment Indicator */
         .time-card.adjusted::after {
             content: '✨ Bio-Sync';
             position: absolute;
@@ -321,14 +363,27 @@
 <body>
     <div class="container">
         <header>
-            <h1>Cetalabs Holistic CEO Dashboard</h1>
+            <h1>Holistic CEO Dashboard</h1>
             <p class="subtitle">Company of One • Spiritual Alignment • Cycle Synced</p>
-            <p><a href="https://webdevsha.github.io/future-mom-rev/slider.html">My income + retirement calculator || </a><a href="https://webdevsha.github.io/future-mom-rev/okr.html">Breakdown of to-do</a></p>
+            <p style="margin-top: 10px;">
+                <a href="https://webdevsha.github.io/future-mom-rev/slider.html">Income & Retirement Calc</a> | 
+                <a href="https://webdevsha.github.io/future-mom-rev/okr.html">Detailed OKR View</a>
+            </p>
         </header>
+
+        <!-- CONTROLS BAR: Life Stage -->
+        <div class="controls-bar">
+            <label style="color:#831843; font-weight:600;">Current Chapter:</label>
+            <select id="lifeStageSelect" class="life-stage-select" onchange="updateLifeStage()">
+                <option value="preparing">🌱 Preparing for Pregnancy (Health & Calm)</option>
+                <option value="pregnancy">🤰 Pregnancy (Nesting)</option>
+                <option value="parenting" selected>👶 Parenting (Guide)</option>
+                <option value="parenting_pregnant">🤱 Parenting + Pregnant (Supermom Mode)</option>
+            </select>
+        </div>
 
         <!-- COLLAPSIBLE CYCLE WIDGET -->
         <div class="cycle-widget-container">
-            <!-- Header (Visible when collapsed) -->
             <div class="cycle-header" onclick="toggleWidget()">
                 <div class="cycle-summary">
                     <h3>Biology Status:</h3>
@@ -338,7 +393,6 @@
                 <div class="toggle-icon" id="widgetIcon">▼</div>
             </div>
 
-            <!-- Body (Hidden when collapsed) -->
             <div class="cycle-body" id="cycleBody">
                 <div class="cycle-controls">
                     <div style="flex: 1;">
@@ -363,7 +417,6 @@
                     </div>
                 </div>
 
-                <!-- Phase Previewer -->
                 <div class="preview-bar">
                     <span style="font-size:0.85rem; font-weight:bold; color:#831843;">👀 Preview content for:</span>
                     <button class="preview-btn" onclick="previewPhase('menstrual')">Menstrual</button>
@@ -437,17 +490,39 @@
     </div>
 
     <script>
-        /* --- 1. CYCLE LOGIC --- */
-        let truePhase = 'menstrual'; // The calculated phase based on date
-        let displayPhase = 'menstrual'; // The phase currently being shown (can be previewed)
+        /* --- 1. CONFIG & CYCLE LOGIC --- */
+        let truePhase = 'menstrual'; 
+        let displayPhase = 'menstrual'; 
         let trueDay = 1;
+        let currentLifeStage = 'parenting'; // Default
         const cycleLength = 28;
 
+        const lifeStageData = {
+            preparing: {
+                id: 'baby', icon: '🌱', title: 'Preparing', focus: 'Health & Calm', style: 'dept-baby',
+                okrs: ['KR: Daily Folic Acid & Supps', 'KR: Track Cycle Consistently', 'KR: Reduce Stress (Cortisol)', 'KR: Health Checkup'],
+                win: 'Book a "Pre-Baby" couples spa day'
+            },
+            pregnancy: {
+                id: 'baby', icon: '🤰', title: 'Pregnancy', focus: 'Nesting & Health', style: 'dept-baby',
+                okrs: ['KR: Hypnobirthing Course', 'KR: Daily Pelvic Floor', 'KR: Nursery Setup', 'KR: Read 1 Birth Book'],
+                win: 'Cast a belly mold or start a pregnancy journal'
+            },
+            parenting: {
+                id: 'baby', icon: '👶', title: 'Parenting', focus: 'Connection & Guide', style: 'dept-baby',
+                okrs: ['KR: Daily Sensory Play', 'KR: Bedtime Spiritual Stories', 'KR: Outdoor Nature Walk', 'KR: Toy Rotation'],
+                win: 'Create a "First Words" audio capsule or Photo Book'
+            },
+            parenting_pregnant: {
+                id: 'baby', icon: '🤱', title: 'Parenting + Pregnant', focus: 'Energy Management', style: 'dept-baby',
+                okrs: ['KR: Sibling Prep Books', 'KR: Outsource Heavy Lifting', 'KR: Nap when Toddler Naps', 'KR: Batch Cook for Postpartum'],
+                win: 'Pack a "Big Brother/Sister" gift box'
+            }
+        };
+
         const cycleData = {
-            menstrual: { // Days 1-5 (Winter)
-                name: 'Menstrual (Winter)',
-                style: 'phase-menstrual',
-                focus: 'Rest & Spiritual Reflection',
+            menstrual: { 
+                name: 'Menstrual (Winter)', style: 'phase-menstrual', focus: 'Rest & Spiritual Reflection',
                 note: "Energy is lowest. Prioritize spiritual grounding (Dhikr/Journaling) and deep rest. No heavy social lifting.",
                 adjustments: {
                     morning: { task: 'Gentle Stretch / Prayer', type: 'ctx-self' },
@@ -455,16 +530,10 @@
                     work2: { task: 'Learning/Reading', type: 'ctx-biz' },
                     evening: { task: 'Early Bedtime / Reflection', type: 'ctx-self' }
                 },
-                powerMoves: [
-                    { badge: 'Biz', text: 'Audit Finances & Metrics' },
-                    { badge: 'Spirit', text: 'Increase Tahajjud/Dua (Reflection)' },
-                    { badge: 'Self', text: 'Magnesium baths & Warm food' }
-                ]
+                powerMoves: [ { badge: 'Biz', text: 'Audit Finances & Metrics' }, { badge: 'Spirit', text: 'Increase Tahajjud/Dua (Reflection)' }, { badge: 'Self', text: 'Magnesium baths & Warm food' } ]
             },
-            follicular: { // Days 6-12 (Spring)
-                name: 'Follicular (Spring)',
-                style: 'phase-follicular',
-                focus: 'Plan & Create',
+            follicular: { 
+                name: 'Follicular (Spring)', style: 'phase-follicular', focus: 'Plan & Create',
                 note: "Energy rising. Great for brainstorming new features and planning family outings.",
                 adjustments: {
                     morning: { task: 'Cardio / Run', type: 'ctx-self' },
@@ -472,33 +541,21 @@
                     work2: { task: 'Project Planning', type: 'ctx-biz' },
                     evening: { task: 'Family Outing / Fun', type: 'ctx-family' }
                 },
-                powerMoves: [
-                    { badge: 'Biz', text: 'Start new dev features' },
-                    { badge: 'Home', text: 'Deep Clean / Refresh Space' },
-                    { badge: 'Baby', text: 'New sensory play setup' }
-                ]
+                powerMoves: [ { badge: 'Biz', text: 'Start new dev features' }, { badge: 'Home', text: 'Deep Clean / Refresh Space' }, { badge: 'Baby', text: 'New sensory play setup' } ]
             },
-            ovulatory: { // Days 13-15 (Summer)
-                name: 'Ovulatory (Summer)',
-                style: 'phase-ovulatory',
-                focus: 'Connect & Pitch',
+            ovulatory: { 
+                name: 'Ovulatory (Summer)', style: 'phase-ovulatory', focus: 'Connect & Pitch',
                 note: "Peak energy & magnetism. Host gatherings, pitch clients, and prioritize connection with husband.",
                 adjustments: {
-                    morning: { task: 'HIIT / Power Pilates/ Weight Training', type: 'ctx-self' },
+                    morning: { task: 'HIIT / Power Pilates', type: 'ctx-self' },
                     work1: { task: 'Sales Calls / Recording', type: 'ctx-biz' },
                     work2: { task: 'Collab / Meetings', type: 'ctx-biz' },
                     evening: { task: 'Date Night / Hosting', type: 'ctx-marriage' }
                 },
-                powerMoves: [
-                    { badge: 'Biz', text: 'Batch record content' },
-                    { badge: 'Love', text: 'Prioritize intimacy' },
-                    { badge: 'Fam', text: 'Host dinner/playdates' }
-                ]
+                powerMoves: [ { badge: 'Biz', text: 'Batch record content' }, { badge: 'Love', text: 'Prioritize intimacy' }, { badge: 'Fam', text: 'Host dinner/playdates' } ]
             },
-            luteal: { // Days 16-28 (Autumn)
-                name: 'Luteal (Autumn)',
-                style: 'phase-luteal',
-                focus: 'Finish & Organize',
+            luteal: { 
+                name: 'Luteal (Autumn)', style: 'phase-luteal', focus: 'Finish & Organize',
                 note: "Focus narrows. Finish open loops. Prepare household logistics. Spiritual consistency is key here.",
                 adjustments: {
                     morning: { task: 'Strength / Pilates', type: 'ctx-self' },
@@ -506,11 +563,7 @@
                     work2: { task: 'Organizing / SOPs', type: 'ctx-biz' },
                     evening: { task: 'Home Org / Prep', type: 'ctx-family' }
                 },
-                powerMoves: [
-                    { badge: 'Biz', text: 'Close open tickets/tasks' },
-                    { badge: 'Home', text: 'Meal Prep & Declutter' },
-                    { badge: 'Spirit', text: 'Consistent Prayer Routine' }
-                ]
+                powerMoves: [ { badge: 'Biz', text: 'Close open tickets/tasks' }, { badge: 'Home', text: 'Meal Prep & Declutter' }, { badge: 'Spirit', text: 'Consistent Prayer Routine' } ]
             }
         };
 
@@ -518,64 +571,44 @@
             const inputDate = document.getElementById('lastPeriodInput').value;
             const startDate = new Date(inputDate);
             const today = new Date(); 
-            
             const diffTime = Math.abs(today - startDate);
             let diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)); 
             
-            // Note: If testing in 2024, Dec 2025 logic applies as "future sim". 
-            // We use simple modulo logic assuming user sets appropriate start date.
+            trueDay = (diffDays % cycleLength) || cycleLength; 
             
-            trueDay = (diffDays % cycleLength) || cycleLength; // 1-28
-            
-            // Determine Phase
             if (trueDay <= 5) truePhase = 'menstrual';
             else if (trueDay <= 12) truePhase = 'follicular';
             else if (trueDay <= 15) truePhase = 'ovulatory';
             else truePhase = 'luteal';
 
-            // Next Period Calc
             const nextPeriod = new Date(startDate);
             nextPeriod.setDate(startDate.getDate() + cycleLength);
             document.getElementById('nextPeriodDate').textContent = nextPeriod.toLocaleDateString();
 
-            // Set display to true
             displayPhase = truePhase;
             updateCycleUI(trueDay, truePhase);
-            
-            // Reset buttons
             document.querySelectorAll('.preview-btn').forEach(b => b.classList.remove('active-preview'));
-
-            // Render Dashboard
             setSeason(currentSeason); 
         }
 
         function previewPhase(phaseName) {
             displayPhase = phaseName;
-            
-            // Highlight button
             document.querySelectorAll('.preview-btn').forEach(b => b.classList.remove('active-preview'));
             event.target.classList.add('active-preview');
-
-            // Update UI with "Preview Mode" indication (using generic day for phase)
             let previewDay = 1;
             if (phaseName === 'follicular') previewDay = 7;
             if (phaseName === 'ovulatory') previewDay = 14;
             if (phaseName === 'luteal') previewDay = 20;
-
-            updateCycleUI(previewDay, phaseName, true); // true = preview mode
+            updateCycleUI(previewDay, phaseName, true); 
             setSeason(currentSeason);
         }
 
         function updateCycleUI(day, phase, isPreview = false) {
             const data = cycleData[phase];
             const badgeClass = `cycle-phase-badge ${data.style}`;
-            
-            // Header (Summary)
             document.getElementById('headerPhaseBadge').className = badgeClass;
             document.getElementById('headerPhaseBadge').textContent = data.name + (isPreview ? " (Preview)" : "");
             document.getElementById('headerDayVal').textContent = day;
-
-            // Expanded Body
             document.getElementById('fullPhaseBadge').className = badgeClass;
             document.getElementById('fullPhaseBadge').textContent = data.name;
             const barWidth = (day / 28) * 100;
@@ -589,6 +622,11 @@
             icon.classList.toggle('collapsed-icon');
         }
 
+        function updateLifeStage() {
+            currentLifeStage = document.getElementById('lifeStageSelect').value;
+            setSeason(currentSeason);
+        }
+
         /* --- 2. SEASON DATA --- */
         let currentSeason = 'nurture';
 
@@ -597,24 +635,24 @@
                 departments: [
                     { 
                         id: 'self', icon: '🧘‍♀️', title: 'Self & Spirit', focus: 'Restoration', style: 'dept-self', 
-                        okrs: ['KR: 4x Weekly Pilates/ Weight Training', 'KR: Daily Quran Journaling', 'KR: Sleep 7.5h avg'] 
+                        okrs: ['KR: 4x Weekly Yoga/Pilates', 'KR: Daily Quran Journaling', 'KR: Sleep 7.5h avg'],
+                        win: 'Solo spiritual retreat day (local)'
                     },
-                    { 
-                        id: 'baby', icon: '👶', title: 'Parenting', focus: 'Connection', style: 'dept-baby', 
-                        okrs: ['KR: Daily Sensory Play', 'KR: Bedtime Spiritual Stories', 'KR: 7pm Bedtime'] 
-                    },
+                    // 'baby' department is injected dynamically
                     { 
                         id: 'marriage', icon: '💑', title: 'Marriage & Home', focus: 'Reconnection', style: 'dept-marriage', 
-                        okrs: ['KR: Weekly Logistics Sync (Sun)', 'KR: Host 1 Calm Dinner', 'KR: Monthly In-laws Visit', 'KR: Pray Together Weekly'] 
+                        okrs: ['KR: Weekly Logistics Sync (Sun)', 'KR: Host 1 Calm Dinner', 'KR: Monthly In-laws Visit', 'KR: Pray Together Weekly'],
+                        win: 'Recreate our first date menu at home'
                     },
                     { 
                         id: 'biz', icon: '💼', title: 'Cetalabs', focus: 'Stability (25h)', style: 'dept-biz', 
-                        okrs: ['KR: Set "Niat" before work', 'KR: Retain Members', 'KR: Maintenance Dev Only'] 
+                        okrs: ['KR: Set "Niat" before work', 'KR: Retain Members', 'KR: Maintenance Dev Only'],
+                        win: 'Record a "Founder Journey" reflection vlog'
                     }
                 ],
                 baseSchedule: [
                     { time: '6:30 AM', slot: 'morning' },
-                    { time: '8:30 AM', activity: 'Baby Routine', tag: 'Parenting', style: 'ctx-baby' },
+                    { time: '8:30 AM', activity: 'Life Stage Routine', tag: 'Flex', style: 'ctx-baby' },
                     { time: '10:00 AM', slot: 'work1' },
                     { time: '12:00 PM', activity: 'Lunch & Nap/Prayer', tag: 'Rest', style: 'ctx-self' },
                     { time: '2:00 PM', slot: 'work2' },
@@ -622,60 +660,60 @@
                     { time: '8:00 PM', slot: 'evening' }
                 ],
                 weekly: [ { badge: 'Biz', text: 'Finance Review' }, { badge: 'Spirit', text: 'Friday Surah Kahf' }, { badge: 'Home', text: 'Logistics Sync w/ Husband' } ],
-                monthly: [ { badge: 'Fam', text: 'Visit Big Family' }, { badge: 'Baby', text: 'Milestone Review' } ]
+                monthly: [ { badge: 'Fam', text: 'Visit Big Family' }, { badge: 'Life', text: 'Milestone Review' } ]
             },
             balance: {
                 departments: [
                     { 
                         id: 'self', icon: '🧘‍♀️', title: 'Self & Spirit', focus: 'Maintenance', style: 'dept-self', 
-                        okrs: ['KR: 3x Workout', 'KR: Daily Meditation/Dhikr', 'KR: Read 1 Spiritual Book'] 
+                        okrs: ['KR: 3x Workout', 'KR: Daily Meditation/Dhikr', 'KR: Read 1 Spiritual Book'],
+                        win: 'Finish one spiritual book & summarize'
                     },
-                    { 
-                        id: 'baby', icon: '👶', title: 'Parenting', focus: 'Development', style: 'dept-baby', 
-                        okrs: ['KR: Rotate Toys', 'KR: 4x Park Visits', 'KR: Teach 1 New Dua'] 
-                    },
+                    // 'baby' injected dynamically
                     { 
                         id: 'marriage', icon: '💑', title: 'Marriage & Home', focus: 'Partnership', style: 'dept-marriage', 
-                        okrs: ['KR: Bi-weekly Date Night', 'KR: Visit Parents Bi-weekly', 'KR: Host 1 Social Gathering'] 
+                        okrs: ['KR: Bi-weekly Date Night', 'KR: Visit Parents Bi-weekly', 'KR: Host 1 Social Gathering'],
+                        win: 'Weekend getaway or staycation'
                     },
                     { 
                         id: 'biz', icon: '💼', title: 'Cetalabs', focus: 'Growth (30h)', style: 'dept-biz', 
-                        okrs: ['KR: Ethical/Barakah Decisions', 'KR: Grow Users', 'KR: 2 Content/wk'] 
+                        okrs: ['KR: Ethical/Barakah Decisions', 'KR: Grow Users', 'KR: 2 Content/wk'],
+                        win: 'Launch a new community challenge'
                     }
                 ],
                 baseSchedule: [
                     { time: '6:30 AM', slot: 'morning' },
                     { time: '9:00 AM', slot: 'work1' },
-                    { time: '12:30 PM', activity: 'Lunch & Baby', tag: 'Family', style: 'ctx-baby' },
+                    { time: '12:30 PM', activity: 'Lunch & Life Stage', tag: 'Flex', style: 'ctx-baby' },
                     { time: '2:00 PM', slot: 'work2' },
                     { time: '5:00 PM', activity: 'Shut Down', tag: 'Boundaries', style: 'ctx-self' },
                     { time: '8:30 PM', slot: 'evening' }
                 ],
                 weekly: [ { badge: 'Home', text: 'Meal Prep Sync' }, { badge: 'Love', text: 'Sunday Planning' } ],
-                monthly: [ { badge: 'Fam', text: 'Extended Family Outing' }, { badge: 'Baby', text: 'Toy Rotation' } ]
+                monthly: [ { badge: 'Fam', text: 'Extended Family Outing' }, { badge: 'Life', text: 'Toy/Space Rotation' } ]
             },
             sprint: {
                 departments: [
                     { 
                         id: 'self', icon: '🧘‍♀️', title: 'Self & Spirit', focus: 'Min. Dose', style: 'dept-self', 
-                        okrs: ['KR: 15m Prayer/Dhikr', 'KR: 10pm Sleep', 'KR: 15m Movement'] 
+                        okrs: ['KR: 15m Prayer/Dhikr', 'KR: 10pm Sleep', 'KR: 15m Movement'],
+                        win: 'Complete a 30-day gratitude journal'
                     },
-                    { 
-                        id: 'baby', icon: '👶', title: 'Parenting', focus: 'Quality > Quantity', style: 'dept-baby', 
-                        okrs: ['KR: 1h Deep Play', 'KR: Outsource Laundry', 'KR: Listen to Quran Audio together'] 
-                    },
+                    // 'baby' injected dynamically
                     { 
                         id: 'marriage', icon: '💑', title: 'Marriage & Home', focus: 'Support', style: 'dept-marriage', 
-                        okrs: ['KR: Monthly Date', 'KR: Outsourced Cleaning', 'KR: Quick Daily Connect'] 
+                        okrs: ['KR: Monthly Date', 'KR: Outsourced Cleaning', 'KR: Quick Daily Connect'],
+                        win: 'Surprise gift for spouse'
                     },
                     { 
                         id: 'biz', icon: '💼', title: 'Cetalabs', focus: 'Scale (35h+)', style: 'dept-biz', 
-                        okrs: ['KR: Donate % of Profit', 'KR: Hire VA', 'KR: 2 Corp Deals'] 
+                        okrs: ['KR: Donate % of Profit', 'KR: Hire VA', 'KR: 2 Corp Deals'],
+                        win: 'Close a major partnership deal'
                     }
                 ],
                 baseSchedule: [
                     { time: '6:00 AM', slot: 'morning' },
-                    { time: '8:00 AM', activity: 'Baby/Breakfast', tag: 'Family', style: 'ctx-baby' },
+                    { time: '8:00 AM', activity: 'Life Stage Prep', tag: 'Family', style: 'ctx-baby' },
                     { time: '10:00 AM', slot: 'work1' },
                     { time: '2:00 PM', slot: 'work2' },
                     { time: '5:00 PM', activity: 'Disconnect', tag: 'Family', style: 'ctx-family' },
@@ -688,22 +726,35 @@
 
         function setSeason(season) {
             currentSeason = season;
-            // Update Buttons
             document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
             document.querySelector(`.tab-${season}`).classList.add('active');
 
             const data = seasons[season];
-            const cData = cycleData[displayPhase]; // Use displayPhase to support previewing
+            const cData = cycleData[displayPhase];
+            
+            // Inject correct Life Stage data into departments
+            const currentLifeData = lifeStageData[currentLifeStage];
+            
+            // Clone departments to avoid mutating original
+            let displayDepts = [...data.departments];
+            // Insert Life Stage dept at index 1 (after Self)
+            displayDepts.splice(1, 0, currentLifeData);
 
-            // 1. Departments
-            const deptHTML = data.departments.map(d => `
+            // 1. Render Departments
+            const deptHTML = displayDepts.map(d => `
                 <div class="dept-card ${d.style}">
-                    <span class="dept-icon">${d.icon}</span>
-                    <div class="dept-title">${d.title}</div>
-                    <span class="dept-focus">${d.focus}</span>
-                    <ul class="dept-okr-list">
-                        ${d.okrs.map(o => `<li>${o}</li>`).join('')}
-                    </ul>
+                    <div>
+                        <span class="dept-icon">${d.icon}</span>
+                        <div class="dept-title">${d.title}</div>
+                        <span class="dept-focus">${d.focus}</span>
+                        <ul class="dept-okr-list">
+                            ${d.okrs.map(o => `<li>${o}</li>`).join('')}
+                        </ul>
+                    </div>
+                    <div class="creative-win-box">
+                        <span class="win-title">✨ Suggestive Win</span>
+                        <span class="win-text">"${d.win || 'Plan something special'}"</span>
+                    </div>
                 </div>
             `).join('');
             document.getElementById('deptContainer').innerHTML = deptHTML;

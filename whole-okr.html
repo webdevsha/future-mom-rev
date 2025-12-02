@@ -1,0 +1,738 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Holistic CEO Dashboard - Spiritual & Cycle Synced</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #fff0f5 0%, #fdf2f8 100%);
+            padding: 20px;
+            line-height: 1.6;
+            color: #4a044e;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding-bottom: 50px;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px 0;
+        }
+        
+        h1 {
+            font-size: 2.2rem;
+            color: #9d174d;
+            margin-bottom: 10px;
+        }
+        
+        .subtitle {
+            font-size: 1.1rem;
+            color: #be185d;
+            opacity: 0.8;
+        }
+
+        /* --- COLLAPSIBLE CYCLE WIDGET --- */
+        .cycle-widget-container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 25px rgba(219, 39, 119, 0.15);
+            margin-bottom: 40px;
+            border: 2px solid #fbcfe8;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .cycle-header {
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            background: #fff0f5;
+        }
+
+        .cycle-header:hover { background: #fce7f3; }
+
+        .cycle-summary {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .cycle-summary h3 { margin: 0; color: #831843; font-size: 1.1rem; }
+        
+        .cycle-body {
+            padding: 20px 30px;
+            display: block; /* Toggled via JS */
+        }
+        .cycle-body.collapsed { display: none; }
+
+        .cycle-controls {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .cycle-phase-badge {
+            display: inline-block;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* Phase Colors */
+        .phase-menstrual { background: #fce7f3; color: #be185d; border: 1px solid #fbcfe8; }
+        .phase-follicular { background: #dcfce7; color: #15803d; border: 1px solid #bbf7d0; }
+        .phase-ovulatory { background: #fef9c3; color: #a16207; border: 1px solid #fde047; }
+        .phase-luteal { background: #ffedd5; color: #c2410c; border: 1px solid #fed7aa; }
+
+        .cycle-progress-container {
+            flex-grow: 1;
+            max-width: 400px;
+            margin: 0 20px;
+        }
+        .cycle-bar-bg { background: #f3f4f6; height: 10px; border-radius: 10px; overflow: hidden; }
+        .cycle-bar-fill { height: 100%; background: #db2777; width: 0%; transition: width 0.5s; }
+        .cycle-labels { display: flex; justify-content: space-between; font-size: 0.75rem; color: #9ca3af; margin-top: 5px; }
+
+        .preview-bar {
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px dashed #f9a8d4;
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .preview-btn {
+            font-size: 0.8rem;
+            padding: 6px 12px;
+            border-radius: 15px;
+            border: 1px solid #e5e7eb;
+            background: white;
+            cursor: pointer;
+            color: #6b7280;
+        }
+        .preview-btn:hover { background: #f3f4f6; }
+        .preview-btn.active-preview { background: #fce7f3; color: #be185d; border-color: #fbcfe8; font-weight: bold; }
+        
+        .reset-btn {
+            font-size: 0.8rem;
+            padding: 6px 12px;
+            background: #be185d;
+            color: white;
+            border: none;
+            border-radius: 15px;
+            cursor: pointer;
+            margin-left: auto;
+        }
+
+        /* --- Season Tabs --- */
+        .tabs {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 40px;
+            flex-wrap: wrap;
+        }
+
+        .tab-btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 30px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            background: white;
+            color: #64748b;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            border: 2px solid transparent;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .tab-btn:hover { transform: translateY(-2px); }
+        .tab-btn.active { color: white; box-shadow: 0 8px 15px rgba(157, 23, 77, 0.2); }
+
+        .tab-nurture.active { background: #059669; border-color: #059669; }
+        .tab-balance.active { background: #2563eb; border-color: #2563eb; }
+        .tab-sprint.active { background: #7c3aed; border-color: #7c3aed; }
+
+        /* --- Grid Layout --- */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 40px;
+        }
+
+        /* --- Departments --- */
+        .departments-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); /* Slightly wider for longer OKRs */
+            gap: 20px;
+        }
+
+        .dept-card {
+            background: white;
+            border-radius: 16px;
+            padding: 25px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.03);
+            border-top: 5px solid #ccc;
+            transition: transform 0.2s;
+            height: 100%;
+        }
+        .dept-card:hover { transform: translateY(-5px); }
+        .dept-icon { font-size: 1.8rem; margin-bottom: 10px; display: block; }
+        .dept-title { font-size: 1.2rem; font-weight: 700; color: #1e293b; margin-bottom: 5px; }
+        .dept-focus { font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.5px; font-weight: 600; margin-bottom: 15px; display: block;}
+        
+        .dept-okr-list { list-style: none; }
+        .dept-okr-list li {
+            margin-bottom: 10px;
+            font-size: 0.9rem;
+            color: #475569;
+            padding-left: 15px;
+            border-left: 2px solid #e2e8f0;
+        }
+        
+        .dept-biz { border-color: #f59e0b; } .dept-biz .dept-focus { color: #d97706; }
+        .dept-self { border-color: #10b981; } .dept-self .dept-focus { color: #059669; }
+        .dept-marriage { border-color: #ec4899; } .dept-marriage .dept-focus { color: #db2777; }
+        .dept-baby { border-color: #3b82f6; } .dept-baby .dept-focus { color: #2563eb; }
+        .dept-family { border-color: #8b5cf6; } .dept-family .dept-focus { color: #7c3aed; }
+
+        /* --- Daily Rhythm --- */
+        .section-header { display: flex; align-items: center; gap: 15px; margin-bottom: 25px; }
+        .section-header h2 { font-size: 1.5rem; color: #1e293b; }
+        .section-line { flex-grow: 1; height: 2px; background: #e2e8f0; }
+
+        .schedule-container {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+        }
+
+        .cycle-note {
+            background: #fdf2f8; 
+            color: #831843; 
+            padding: 15px; 
+            border-radius: 10px; 
+            margin-bottom: 20px; 
+            font-size: 0.95rem; 
+            border-left: 4px solid #db2777;
+        }
+
+        .time-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 15px;
+        }
+
+        .time-card {
+            padding: 15px;
+            border-radius: 12px;
+            text-align: center;
+            border: 1px solid #f1f5f9;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Dynamic Adjustment Indicator */
+        .time-card.adjusted::after {
+            content: '✨ Bio-Sync';
+            position: absolute;
+            top: 0;
+            right: 0;
+            background: #fce7f3;
+            color: #9d174d;
+            font-size: 0.6rem;
+            padding: 2px 6px;
+            border-bottom-left-radius: 8px;
+        }
+
+        .time-label { display: block; font-size: 0.8rem; opacity: 0.7; margin-bottom: 5px; font-weight: 600; }
+        .time-activity { font-weight: bold; font-size: 1rem; margin-bottom: 5px; }
+        .time-tag { font-size: 0.75rem; padding: 2px 8px; border-radius: 10px; background: rgba(255,255,255,0.5); display: inline-block; }
+
+        .ctx-biz { background: #fff7ed; color: #c2410c; border-color: #ffedd5; }
+        .ctx-self { background: #f0fdf4; color: #15803d; border-color: #dcfce7; }
+        .ctx-baby { background: #eff6ff; color: #1d4ed8; border-color: #dbeafe; }
+        .ctx-family { background: #faf5ff; color: #7e22ce; border-color: #f3e8ff; }
+
+        /* --- Protocol Cards --- */
+        .protocols-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 25px;
+        }
+        .protocol-card { background: white; padding: 25px; border-radius: 16px; box-shadow: 0 4px 15px rgba(0,0,0,0.03); }
+        .protocol-title { font-size: 1.1rem; font-weight: 700; margin-bottom: 15px; color: #334155; padding-bottom: 10px; border-bottom: 2px solid #f1f5f9; }
+        
+        .cl-item { display: flex; align-items: flex-start; gap: 10px; margin-bottom: 12px; font-size: 0.9rem; color: #475569; }
+        .cl-badge { font-size: 0.7rem; padding: 2px 6px; border-radius: 4px; background: #e2e8f0; color: #64748b; flex-shrink: 0; margin-top: 2px; }
+
+        /* Expand Icon */
+        .toggle-icon { transition: transform 0.3s; font-size: 1.2rem; color: #9d174d; }
+        .collapsed-icon { transform: rotate(-90deg); }
+
+        @media (max-width: 900px) {
+            .protocols-grid { grid-template-columns: 1fr; }
+            .time-grid { grid-template-columns: 1fr 1fr; }
+            .cycle-controls { flex-direction: column; align-items: flex-start; }
+            .cycle-progress-container { width: 100%; margin: 15px 0; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Holistic CEO Dashboard</h1>
+            <p class="subtitle">Company of One • Spiritual Alignment • Cycle Synced</p>
+            <p><a href="https://webdevsha.github.io/future-mom-rev/slider.html">My income + retirement calculator || </a><a href="https://webdevsha.github.io/future-mom-rev/okr.html">Breakdown of to-do</a></p>
+        </header>
+
+        <!-- COLLAPSIBLE CYCLE WIDGET -->
+        <div class="cycle-widget-container">
+            <!-- Header (Visible when collapsed) -->
+            <div class="cycle-header" onclick="toggleWidget()">
+                <div class="cycle-summary">
+                    <h3>Biology Status:</h3>
+                    <span id="headerPhaseBadge" class="cycle-phase-badge phase-menstrual">...</span>
+                    <span>Day <strong id="headerDayVal">1</strong></span>
+                </div>
+                <div class="toggle-icon" id="widgetIcon">▼</div>
+            </div>
+
+            <!-- Body (Hidden when collapsed) -->
+            <div class="cycle-body" id="cycleBody">
+                <div class="cycle-controls">
+                    <div style="flex: 1;">
+                        <span id="fullPhaseBadge" class="cycle-phase-badge phase-menstrual" style="margin-bottom:10px;">...</span>
+                        <div class="cycle-progress-container" style="margin: 0; max-width: 100%;">
+                            <div class="cycle-bar-bg">
+                                <div id="cycleBar" class="cycle-bar-fill"></div>
+                            </div>
+                            <div class="cycle-labels">
+                                <span>Menstrual</span>
+                                <span>Follicular</span>
+                                <span>Ovulatory</span>
+                                <span>Luteal</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div style="text-align: right;">
+                        <label style="font-size:0.85rem; color:#64748b; display:block;">Start Date:</label>
+                        <input type="date" id="lastPeriodInput" value="2025-12-01" onchange="recalculateTrueCycle()" style="padding: 8px; border-radius: 6px; border:1px solid #ddd;">
+                        <div style="font-size:0.8rem; color:#be185d; margin-top:5px;">Next: <span id="nextPeriodDate">...</span></div>
+                    </div>
+                </div>
+
+                <!-- Phase Previewer -->
+                <div class="preview-bar">
+                    <span style="font-size:0.85rem; font-weight:bold; color:#831843;">👀 Preview content for:</span>
+                    <button class="preview-btn" onclick="previewPhase('menstrual')">Menstrual</button>
+                    <button class="preview-btn" onclick="previewPhase('follicular')">Follicular</button>
+                    <button class="preview-btn" onclick="previewPhase('ovulatory')">Ovulatory</button>
+                    <button class="preview-btn" onclick="previewPhase('luteal')">Luteal</button>
+                    <button class="reset-btn" onclick="recalculateTrueCycle()">↺ Reset to Today</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- SEASON TABS -->
+        <div class="tabs">
+            <button class="tab-btn tab-nurture active" onclick="setSeason('nurture')">🌱 Season of Nurture (Conservative)</button>
+            <button class="tab-btn tab-balance" onclick="setSeason('balance')">⚖️ Season of Balance (Moderate)</button>
+            <button class="tab-btn tab-sprint" onclick="setSeason('sprint')">🚀 Season of Sprint (Ambitious)</button>
+        </div>
+
+        <div class="dashboard-grid">
+            
+            <!-- 1. DEPARTMENTS -->
+            <div>
+                <div class="section-header">
+                    <h2>Quarterly Department OKRs</h2>
+                    <div class="section-line"></div>
+                </div>
+                <div class="departments-container" id="deptContainer">
+                    <!-- JS populated -->
+                </div>
+            </div>
+
+            <!-- 2. DAILY RHYTHM (CYCLE ADJUSTED) -->
+            <div>
+                <div class="section-header">
+                    <h2>The Daily Rhythm</h2>
+                    <div class="section-line"></div>
+                </div>
+                <div class="schedule-container">
+                    <div class="cycle-note" id="cycleNote">
+                        <!-- JS populated cycle advice -->
+                    </div>
+                    <div class="time-grid" id="timeGrid">
+                        <!-- JS populated schedule -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- 3. PROTOCOLS -->
+            <div>
+                <div class="section-header">
+                    <h2>Routine Protocols</h2>
+                    <div class="section-line"></div>
+                </div>
+                <div class="protocols-grid">
+                    <div class="protocol-card" style="border-top: 4px solid #db2777;">
+                        <div class="protocol-title">🩸 Current Cycle Power Moves</div>
+                        <div id="cycleProtocolList"></div>
+                    </div>
+                    <div class="protocol-card">
+                        <div class="protocol-title">Weekly Must-Dos</div>
+                        <div id="weeklyList"></div>
+                    </div>
+                    <div class="protocol-card">
+                        <div class="protocol-title">Monthly Reset</div>
+                        <div id="monthlyList"></div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        /* --- 1. CYCLE LOGIC --- */
+        let truePhase = 'menstrual'; // The calculated phase based on date
+        let displayPhase = 'menstrual'; // The phase currently being shown (can be previewed)
+        let trueDay = 1;
+        const cycleLength = 28;
+
+        const cycleData = {
+            menstrual: { // Days 1-5 (Winter)
+                name: 'Menstrual (Winter)',
+                style: 'phase-menstrual',
+                focus: 'Rest & Spiritual Reflection',
+                note: "Energy is lowest. Prioritize spiritual grounding (Dhikr/Journaling) and deep rest. No heavy social lifting.",
+                adjustments: {
+                    morning: { task: 'Gentle Stretch / Prayer', type: 'ctx-self' },
+                    work1: { task: 'Admin/Review (Low Energy)', type: 'ctx-biz' },
+                    work2: { task: 'Learning/Reading', type: 'ctx-biz' },
+                    evening: { task: 'Early Bedtime / Reflection', type: 'ctx-self' }
+                },
+                powerMoves: [
+                    { badge: 'Biz', text: 'Audit Finances & Metrics' },
+                    { badge: 'Spirit', text: 'Increase Tahajjud/Dua (Reflection)' },
+                    { badge: 'Self', text: 'Magnesium baths & Warm food' }
+                ]
+            },
+            follicular: { // Days 6-12 (Spring)
+                name: 'Follicular (Spring)',
+                style: 'phase-follicular',
+                focus: 'Plan & Create',
+                note: "Energy rising. Great for brainstorming new features and planning family outings.",
+                adjustments: {
+                    morning: { task: 'Cardio / Run', type: 'ctx-self' },
+                    work1: { task: 'Creative Deep Work (Code)', type: 'ctx-biz' },
+                    work2: { task: 'Project Planning', type: 'ctx-biz' },
+                    evening: { task: 'Family Outing / Fun', type: 'ctx-family' }
+                },
+                powerMoves: [
+                    { badge: 'Biz', text: 'Start new dev features' },
+                    { badge: 'Home', text: 'Deep Clean / Refresh Space' },
+                    { badge: 'Baby', text: 'New sensory play setup' }
+                ]
+            },
+            ovulatory: { // Days 13-15 (Summer)
+                name: 'Ovulatory (Summer)',
+                style: 'phase-ovulatory',
+                focus: 'Connect & Pitch',
+                note: "Peak energy & magnetism. Host gatherings, pitch clients, and prioritize connection with husband.",
+                adjustments: {
+                    morning: { task: 'HIIT / Power Yoga', type: 'ctx-self' },
+                    work1: { task: 'Sales Calls / Recording', type: 'ctx-biz' },
+                    work2: { task: 'Collab / Meetings', type: 'ctx-biz' },
+                    evening: { task: 'Date Night / Hosting', type: 'ctx-marriage' }
+                },
+                powerMoves: [
+                    { badge: 'Biz', text: 'Batch record content' },
+                    { badge: 'Love', text: 'Prioritize intimacy' },
+                    { badge: 'Fam', text: 'Host dinner/playdates' }
+                ]
+            },
+            luteal: { // Days 16-28 (Autumn)
+                name: 'Luteal (Autumn)',
+                style: 'phase-luteal',
+                focus: 'Finish & Organize',
+                note: "Focus narrows. Finish open loops. Prepare household logistics. Spiritual consistency is key here.",
+                adjustments: {
+                    morning: { task: 'Strength / Pilates', type: 'ctx-self' },
+                    work1: { task: 'Deep Coding (Finishing)', type: 'ctx-biz' },
+                    work2: { task: 'Organizing / SOPs', type: 'ctx-biz' },
+                    evening: { task: 'Home Org / Prep', type: 'ctx-family' }
+                },
+                powerMoves: [
+                    { badge: 'Biz', text: 'Close open tickets/tasks' },
+                    { badge: 'Home', text: 'Meal Prep & Declutter' },
+                    { badge: 'Spirit', text: 'Consistent Prayer Routine' }
+                ]
+            }
+        };
+
+        function recalculateTrueCycle() {
+            const inputDate = document.getElementById('lastPeriodInput').value;
+            const startDate = new Date(inputDate);
+            const today = new Date(); 
+            
+            const diffTime = Math.abs(today - startDate);
+            let diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)); 
+            
+            // Note: If testing in 2024, Dec 2025 logic applies as "future sim". 
+            // We use simple modulo logic assuming user sets appropriate start date.
+            
+            trueDay = (diffDays % cycleLength) || cycleLength; // 1-28
+            
+            // Determine Phase
+            if (trueDay <= 5) truePhase = 'menstrual';
+            else if (trueDay <= 12) truePhase = 'follicular';
+            else if (trueDay <= 15) truePhase = 'ovulatory';
+            else truePhase = 'luteal';
+
+            // Next Period Calc
+            const nextPeriod = new Date(startDate);
+            nextPeriod.setDate(startDate.getDate() + cycleLength);
+            document.getElementById('nextPeriodDate').textContent = nextPeriod.toLocaleDateString();
+
+            // Set display to true
+            displayPhase = truePhase;
+            updateCycleUI(trueDay, truePhase);
+            
+            // Reset buttons
+            document.querySelectorAll('.preview-btn').forEach(b => b.classList.remove('active-preview'));
+
+            // Render Dashboard
+            setSeason(currentSeason); 
+        }
+
+        function previewPhase(phaseName) {
+            displayPhase = phaseName;
+            
+            // Highlight button
+            document.querySelectorAll('.preview-btn').forEach(b => b.classList.remove('active-preview'));
+            event.target.classList.add('active-preview');
+
+            // Update UI with "Preview Mode" indication (using generic day for phase)
+            let previewDay = 1;
+            if (phaseName === 'follicular') previewDay = 7;
+            if (phaseName === 'ovulatory') previewDay = 14;
+            if (phaseName === 'luteal') previewDay = 20;
+
+            updateCycleUI(previewDay, phaseName, true); // true = preview mode
+            setSeason(currentSeason);
+        }
+
+        function updateCycleUI(day, phase, isPreview = false) {
+            const data = cycleData[phase];
+            const badgeClass = `cycle-phase-badge ${data.style}`;
+            
+            // Header (Summary)
+            document.getElementById('headerPhaseBadge').className = badgeClass;
+            document.getElementById('headerPhaseBadge').textContent = data.name + (isPreview ? " (Preview)" : "");
+            document.getElementById('headerDayVal').textContent = day;
+
+            // Expanded Body
+            document.getElementById('fullPhaseBadge').className = badgeClass;
+            document.getElementById('fullPhaseBadge').textContent = data.name;
+            const barWidth = (day / 28) * 100;
+            document.getElementById('cycleBar').style.width = `${barWidth}%`;
+        }
+
+        function toggleWidget() {
+            const body = document.getElementById('cycleBody');
+            const icon = document.getElementById('widgetIcon');
+            body.classList.toggle('collapsed');
+            icon.classList.toggle('collapsed-icon');
+        }
+
+        /* --- 2. SEASON DATA --- */
+        let currentSeason = 'nurture';
+
+        const seasons = {
+            nurture: {
+                departments: [
+                    { 
+                        id: 'self', icon: '🧘‍♀️', title: 'Self & Spirit', focus: 'Restoration', style: 'dept-self', 
+                        okrs: ['KR: 4x Weekly Yoga', 'KR: Daily Quran Journaling', 'KR: Sleep 7.5h avg'] 
+                    },
+                    { 
+                        id: 'baby', icon: '👶', title: 'Parenting', focus: 'Connection', style: 'dept-baby', 
+                        okrs: ['KR: Daily Sensory Play', 'KR: Bedtime Spiritual Stories', 'KR: 7pm Bedtime'] 
+                    },
+                    { 
+                        id: 'marriage', icon: '💑', title: 'Marriage & Home', focus: 'Reconnection', style: 'dept-marriage', 
+                        okrs: ['KR: Weekly Logistics Sync (Sun)', 'KR: Host 1 Calm Dinner', 'KR: Monthly In-laws Visit', 'KR: Pray Together Weekly'] 
+                    },
+                    { 
+                        id: 'biz', icon: '💼', title: 'Cetalabs', focus: 'Stability (25h)', style: 'dept-biz', 
+                        okrs: ['KR: Set "Niat" before work', 'KR: Retain Members', 'KR: Maintenance Dev Only'] 
+                    }
+                ],
+                baseSchedule: [
+                    { time: '6:30 AM', slot: 'morning' },
+                    { time: '8:30 AM', activity: 'Baby Routine', tag: 'Parenting', style: 'ctx-baby' },
+                    { time: '10:00 AM', slot: 'work1' },
+                    { time: '12:00 PM', activity: 'Lunch & Nap/Prayer', tag: 'Rest', style: 'ctx-self' },
+                    { time: '2:00 PM', slot: 'work2' },
+                    { time: '4:30 PM', activity: 'Park/Family', tag: 'Family', style: 'ctx-family' },
+                    { time: '8:00 PM', slot: 'evening' }
+                ],
+                weekly: [ { badge: 'Biz', text: 'Finance Review' }, { badge: 'Spirit', text: 'Friday Surah Kahf' }, { badge: 'Home', text: 'Logistics Sync w/ Husband' } ],
+                monthly: [ { badge: 'Fam', text: 'Visit Big Family' }, { badge: 'Baby', text: 'Milestone Review' } ]
+            },
+            balance: {
+                departments: [
+                    { 
+                        id: 'self', icon: '🧘‍♀️', title: 'Self & Spirit', focus: 'Maintenance', style: 'dept-self', 
+                        okrs: ['KR: 3x Workout', 'KR: Daily Meditation/Dhikr', 'KR: Read 1 Spiritual Book'] 
+                    },
+                    { 
+                        id: 'baby', icon: '👶', title: 'Parenting', focus: 'Development', style: 'dept-baby', 
+                        okrs: ['KR: Rotate Toys', 'KR: 4x Park Visits', 'KR: Teach 1 New Dua'] 
+                    },
+                    { 
+                        id: 'marriage', icon: '💑', title: 'Marriage & Home', focus: 'Partnership', style: 'dept-marriage', 
+                        okrs: ['KR: Bi-weekly Date Night', 'KR: Visit Parents Bi-weekly', 'KR: Host 1 Social Gathering'] 
+                    },
+                    { 
+                        id: 'biz', icon: '💼', title: 'Cetalabs', focus: 'Growth (30h)', style: 'dept-biz', 
+                        okrs: ['KR: Ethical/Barakah Decisions', 'KR: Grow Users', 'KR: 2 Content/wk'] 
+                    }
+                ],
+                baseSchedule: [
+                    { time: '6:30 AM', slot: 'morning' },
+                    { time: '9:00 AM', slot: 'work1' },
+                    { time: '12:30 PM', activity: 'Lunch & Baby', tag: 'Family', style: 'ctx-baby' },
+                    { time: '2:00 PM', slot: 'work2' },
+                    { time: '5:00 PM', activity: 'Shut Down', tag: 'Boundaries', style: 'ctx-self' },
+                    { time: '8:30 PM', slot: 'evening' }
+                ],
+                weekly: [ { badge: 'Home', text: 'Meal Prep Sync' }, { badge: 'Love', text: 'Sunday Planning' } ],
+                monthly: [ { badge: 'Fam', text: 'Extended Family Outing' }, { badge: 'Baby', text: 'Toy Rotation' } ]
+            },
+            sprint: {
+                departments: [
+                    { 
+                        id: 'self', icon: '🧘‍♀️', title: 'Self & Spirit', focus: 'Min. Dose', style: 'dept-self', 
+                        okrs: ['KR: 15m Prayer/Dhikr', 'KR: 10pm Sleep', 'KR: 15m Movement'] 
+                    },
+                    { 
+                        id: 'baby', icon: '👶', title: 'Parenting', focus: 'Quality > Quantity', style: 'dept-baby', 
+                        okrs: ['KR: 1h Deep Play', 'KR: Outsource Laundry', 'KR: Listen to Quran Audio together'] 
+                    },
+                    { 
+                        id: 'marriage', icon: '💑', title: 'Marriage & Home', focus: 'Support', style: 'dept-marriage', 
+                        okrs: ['KR: Monthly Date', 'KR: Outsourced Cleaning', 'KR: Quick Daily Connect'] 
+                    },
+                    { 
+                        id: 'biz', icon: '💼', title: 'Cetalabs', focus: 'Scale (35h+)', style: 'dept-biz', 
+                        okrs: ['KR: Donate % of Profit', 'KR: Hire VA', 'KR: 2 Corp Deals'] 
+                    }
+                ],
+                baseSchedule: [
+                    { time: '6:00 AM', slot: 'morning' },
+                    { time: '8:00 AM', activity: 'Baby/Breakfast', tag: 'Family', style: 'ctx-baby' },
+                    { time: '10:00 AM', slot: 'work1' },
+                    { time: '2:00 PM', slot: 'work2' },
+                    { time: '5:00 PM', activity: 'Disconnect', tag: 'Family', style: 'ctx-family' },
+                    { time: '9:00 PM', slot: 'evening' }
+                ],
+                weekly: [ { badge: 'Biz', text: 'Sales Calls (3)' }, { badge: 'Home', text: 'Cleaner Visit' } ],
+                monthly: [ { badge: 'Biz', text: 'Corp Pitch' }, { badge: 'Love', text: 'Quality Dinner Out' } ]
+            }
+        };
+
+        function setSeason(season) {
+            currentSeason = season;
+            // Update Buttons
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelector(`.tab-${season}`).classList.add('active');
+
+            const data = seasons[season];
+            const cData = cycleData[displayPhase]; // Use displayPhase to support previewing
+
+            // 1. Departments
+            const deptHTML = data.departments.map(d => `
+                <div class="dept-card ${d.style}">
+                    <span class="dept-icon">${d.icon}</span>
+                    <div class="dept-title">${d.title}</div>
+                    <span class="dept-focus">${d.focus}</span>
+                    <ul class="dept-okr-list">
+                        ${d.okrs.map(o => `<li>${o}</li>`).join('')}
+                    </ul>
+                </div>
+            `).join('');
+            document.getElementById('deptContainer').innerHTML = deptHTML;
+
+            // 2. Schedule
+            document.getElementById('cycleNote').innerHTML = `<strong>${cData.name} Phase Tip:</strong> ${cData.note}`;
+            
+            const timeHTML = data.baseSchedule.map(s => {
+                if (s.slot) {
+                    const adjustment = cData.adjustments[s.slot];
+                    return `
+                        <div class="time-card ${adjustment.type} adjusted">
+                            <span class="time-label">${s.time}</span>
+                            <div class="time-activity">${adjustment.task}</div>
+                            <span class="time-tag">Bio-Sync</span>
+                        </div>
+                    `;
+                } else {
+                    return `
+                        <div class="time-card ${s.style}">
+                            <span class="time-label">${s.time}</span>
+                            <div class="time-activity">${s.activity}</div>
+                            <span class="time-tag">${s.tag}</span>
+                        </div>
+                    `;
+                }
+            }).join('');
+            document.getElementById('timeGrid').innerHTML = timeHTML;
+
+            // 3. Lists
+            const renderList = (items) => items.map(i => `
+                <div class="cl-item">
+                    <span class="cl-badge">${i.badge}</span>
+                    <span>${i.text}</span>
+                </div>
+            `).join('');
+
+            document.getElementById('weeklyList').innerHTML = renderList(data.weekly);
+            document.getElementById('monthlyList').innerHTML = renderList(data.monthly);
+            document.getElementById('cycleProtocolList').innerHTML = renderList(cData.powerMoves);
+        }
+
+        // Init
+        recalculateTrueCycle();
+    </script>
+</body>
+</html>

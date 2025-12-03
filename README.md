@@ -1,6 +1,6 @@
 # Future Mom Rev - Holistic CEO Dashboard
 
-A personalized, holistic dashboard for Shafira, CEO of Cetalabs, designed to harmonize business growth with future motherhood and personal well-being. This project serves as a "Company of One" operating system, integrating cycle syncing, life stage planning, and financial modeling.
+A personalized, holistic dashboard designed to harmonize business growth with future motherhood and personal well-being. This project serves as a "Company of One" operating system, integrating cycle syncing, life stage planning, and financial modeling.
 
 ## 🌟 Vision
 To create a sustainable, joyful, and productive rhythm that adapts to biological needs and life chapters, ensuring that business success does not come at the cost of health or family.

@@ -447,7 +447,7 @@
 
                 <div class="notif-status" id="notificationStatusBox">
                     <div class="notif-dot active"></div>
-                    <span id="notifStatusText">Email alerts active for Menstruation & Ovulation to hai@shafiranoh.com</span>
+                    <span id="notifStatusText">Email alerts active for Menstruation & Ovulation to rafisha92@gmail.com</span>
                 </div>
 
                 <div class="preview-bar">
@@ -522,7 +522,7 @@
 
     <!-- Hidden Form for Email Triggers -->
     <form id="emailTriggerForm" style="display:none;" action="https://formspree.io/f/xaqwwdrq" method="POST">
-        <input type="email" name="_replyto" value="hai@shafiranoh.com">
+        <input type="email" name="_replyto" value="rafisha92@gmail.com">
         <input type="text" name="subject" id="emailSubject">
         <textarea name="message" id="emailMessage"></textarea>
     </form>
@@ -618,14 +618,14 @@
                 });
                 */
 
-                console.log(`EMAIL SENT to hai@shafiranoh.com: ${subject}`);
+                console.log(`EMAIL SENT to rafisha92@gmail.com: ${subject}`);
                 
                 // Mark as notified
                 localStorage.setItem('lastCycleNotified', currentNotifKey);
                 
-                statusText.textContent = `Alert sent to hai@shafiranoh.com for ${phase} phase entry.`;
+                statusText.textContent = `Alert sent to rafisha92@gmail.com for ${phase} phase entry.`;
                 setTimeout(() => {
-                    statusText.textContent = `Email alerts active for Menstruation & Ovulation to hai@shafiranoh.com`;
+                    statusText.textContent = `Email alerts active for Menstruation & Ovulation to rafisha92@gmail.com`;
                 }, 10000);
 
             } catch (err) {

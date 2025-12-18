@@ -121,7 +121,7 @@
         
         .cycle-body {
             padding: 20px 30px;
-            display: block; /* Toggled via JS */
+            display: block; 
         }
         .cycle-body.collapsed { display: none; }
 
@@ -189,6 +189,32 @@
             border-radius: 15px;
             cursor: pointer;
             margin-left: auto;
+        }
+
+        /* Notification Status Box */
+        .notif-status {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            padding: 10px 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+            font-size: 0.85rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .notif-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #cbd5e1;
+        }
+        .notif-dot.active { background: #10b981; animation: pulse 2s infinite; }
+
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.4; }
+            100% { opacity: 1; }
         }
 
         /* --- Season Tabs --- */
@@ -278,9 +304,8 @@
         .dept-baby { border-color: #3b82f6; } .dept-baby .dept-focus { color: #2563eb; }
         .dept-family { border-color: #8b5cf6; } .dept-family .dept-focus { color: #7c3aed; }
         
-        /* New Dept Colors */
-        .dept-visibility { border-color: #06b6d4; } .dept-visibility .dept-focus { color: #0891b2; } /* Cyan */
-        .dept-impact { border-color: #e11d48; } .dept-impact .dept-focus { color: #be123c; } /* Rose/Red */
+        .dept-visibility { border-color: #06b6d4; } .dept-visibility .dept-focus { color: #0891b2; }
+        .dept-impact { border-color: #e11d48; } .dept-impact .dept-focus { color: #be123c; }
 
         /* --- Daily Rhythm --- */
         .section-header { display: flex; align-items: center; gap: 15px; margin-bottom: 25px; }
@@ -352,7 +377,6 @@
         .cl-item { display: flex; align-items: flex-start; gap: 10px; margin-bottom: 12px; font-size: 0.9rem; color: #475569; }
         .cl-badge { font-size: 0.7rem; padding: 2px 6px; border-radius: 4px; background: #e2e8f0; color: #64748b; flex-shrink: 0; margin-top: 2px; }
 
-        /* Expand Icon */
         .toggle-icon { transition: transform 0.3s; font-size: 1.2rem; color: #9d174d; }
         .collapsed-icon { transform: rotate(-90deg); }
 
@@ -421,6 +445,11 @@
                     </div>
                 </div>
 
+                <div class="notif-status" id="notificationStatusBox">
+                    <div class="notif-dot active"></div>
+                    <span id="notifStatusText">Email alerts active for Menstruation & Ovulation to hai@shafiranoh.com</span>
+                </div>
+
                 <div class="preview-bar">
                     <span style="font-size:0.85rem; font-weight:bold; color:#831843;">👀 Preview content for:</span>
                     <button class="preview-btn" onclick="previewPhase('menstrual')">Menstrual</button>
@@ -440,7 +469,6 @@
         </div>
 
         <div class="dashboard-grid">
-            
             <!-- 1. DEPARTMENTS -->
             <div>
                 <div class="section-header">
@@ -489,86 +517,36 @@
                     </div>
                 </div>
             </div>
-
         </div>
     </div>
+
+    <!-- Hidden Form for Email Triggers -->
+    <form id="emailTriggerForm" style="display:none;" action="https://formspree.io/f/xaqwwdrq" method="POST">
+        <input type="email" name="_replyto" value="hai@shafiranoh.com">
+        <input type="text" name="subject" id="emailSubject">
+        <textarea name="message" id="emailMessage"></textarea>
+    </form>
 
     <script>
         /* --- 1. CONFIG & CYCLE LOGIC --- */
         let truePhase = 'menstrual'; 
         let displayPhase = 'menstrual'; 
         let trueDay = 1;
-        let currentLifeStage = 'parenting'; // Default
+        let currentLifeStage = 'parenting'; 
         const cycleLength = 28;
 
         const lifeStageData = {
-            preparing: {
-                id: 'baby', icon: '🌱', title: 'Preparing', focus: 'Health & Calm', style: 'dept-baby',
-                okrs: ['KR: Daily Folic Acid & Supps', 'KR: Track Cycle Consistently', 'KR: Reduce Stress (Cortisol)', 'KR: Health Checkup'],
-                win: 'Book a "Pre-Baby" couples spa day'
-            },
-            pregnancy: {
-                id: 'baby', icon: '🤰', title: 'Pregnancy', focus: 'Nesting & Health', style: 'dept-baby',
-                okrs: ['KR: Hypnobirthing Course', 'KR: Daily Pelvic Floor', 'KR: Nursery Setup', 'KR: Read 1 Birth Book'],
-                win: 'Cast a belly mold or start a pregnancy journal'
-            },
-            parenting: {
-                id: 'baby', icon: '👶', title: 'Parenting', focus: 'Connection & Guide', style: 'dept-baby',
-                okrs: ['KR: Daily Sensory Play', 'KR: Bedtime Spiritual Stories', 'KR: Outdoor Nature Walk', 'KR: Toy Rotation'],
-                win: 'Create a "First Words" audio capsule or Photo Book'
-            },
-            parenting_pregnant: {
-                id: 'baby', icon: '🤱', title: 'Parenting + Pregnant', focus: 'Energy Management', style: 'dept-baby',
-                okrs: ['KR: Sibling Prep Books', 'KR: Outsource Heavy Lifting', 'KR: Nap when Toddler Naps', 'KR: Batch Cook for Postpartum'],
-                win: 'Pack a "Big Brother/Sister" gift box'
-            }
+            preparing: { id: 'baby', icon: '🌱', title: 'Preparing', focus: 'Health & Calm', style: 'dept-baby', okrs: ['KR: Daily Folic Acid & Supps', 'KR: Track Cycle Consistently', 'KR: Reduce Stress (Cortisol)', 'KR: Health Checkup'], win: 'Book a "Pre-Baby" couples spa day' },
+            pregnancy: { id: 'baby', icon: '🤰', title: 'Pregnancy', focus: 'Nesting & Health', style: 'dept-baby', okrs: ['KR: Hypnobirthing Course', 'KR: Daily Pelvic Floor', 'KR: Nursery Setup', 'KR: Read 1 Birth Book'], win: 'Cast a belly mold or start a pregnancy journal' },
+            parenting: { id: 'baby', icon: '👶', title: 'Parenting', focus: 'Connection & Guide', style: 'dept-baby', okrs: ['KR: Daily Sensory Play', 'KR: Bedtime Spiritual Stories', 'KR: Outdoor Nature Walk', 'KR: Toy Rotation'], win: 'Create a "First Words" audio capsule or Photo Book' },
+            parenting_pregnant: { id: 'baby', icon: '🤱', title: 'Parenting + Pregnant', focus: 'Energy Management', style: 'dept-baby', okrs: ['KR: Sibling Prep Books', 'KR: Outsource Heavy Lifting', 'KR: Nap when Toddler Naps', 'KR: Batch Cook for Postpartum'], win: 'Pack a "Big Brother/Sister" gift box' }
         };
 
         const cycleData = {
-            menstrual: { 
-                name: 'Menstrual (Winter)', style: 'phase-menstrual', focus: 'Rest & Spiritual Reflection',
-                note: "Energy is lowest. Prioritize spiritual grounding (Dhikr/Journaling) and deep rest. No heavy social lifting.",
-                adjustments: {
-                    morning: { task: 'Gentle Stretch / Prayer', type: 'ctx-self' },
-                    work1: { task: 'Admin/Review (Low Energy)', type: 'ctx-biz' },
-                    work2: { task: 'Learning/Reading', type: 'ctx-biz' },
-                    evening: { task: 'Early Bedtime / Reflection', type: 'ctx-self' }
-                },
-                powerMoves: [ { badge: 'Biz', text: 'Audit Finances & Metrics' }, { badge: 'Spirit', text: 'Increase Tahajjud/Dua (Reflection)' }, { badge: 'Self', text: 'Magnesium baths & Warm food' } ]
-            },
-            follicular: { 
-                name: 'Follicular (Spring)', style: 'phase-follicular', focus: 'Plan & Create',
-                note: "Energy rising. Great for brainstorming new features and planning family outings.",
-                adjustments: {
-                    morning: { task: 'Cardio / Run', type: 'ctx-self' },
-                    work1: { task: 'Creative Deep Work (Code)', type: 'ctx-biz' },
-                    work2: { task: 'Project Planning', type: 'ctx-biz' },
-                    evening: { task: 'Family Outing / Fun', type: 'ctx-family' }
-                },
-                powerMoves: [ { badge: 'Biz', text: 'Start new dev features' }, { badge: 'Home', text: 'Deep Clean / Refresh Space' }, { badge: 'Baby', text: 'New sensory play setup' } ]
-            },
-            ovulatory: { 
-                name: 'Ovulatory (Summer)', style: 'phase-ovulatory', focus: 'Connect & Pitch',
-                note: "Peak energy & magnetism. Host gatherings, pitch clients, and prioritize connection with husband.",
-                adjustments: {
-                    morning: { task: 'HIIT / Power Pilates', type: 'ctx-self' },
-                    work1: { task: 'Sales Calls / Recording', type: 'ctx-biz' },
-                    work2: { task: 'Collab / Meetings', type: 'ctx-biz' },
-                    evening: { task: 'Date Night / Hosting', type: 'ctx-marriage' }
-                },
-                powerMoves: [ { badge: 'Biz', text: 'Batch record content' }, { badge: 'Love', text: 'Prioritize intimacy' }, { badge: 'Fam', text: 'Host dinner/playdates' } ]
-            },
-            luteal: { 
-                name: 'Luteal (Autumn)', style: 'phase-luteal', focus: 'Finish & Organize',
-                note: "Focus narrows. Finish open loops. Prepare household logistics. Spiritual consistency is key here.",
-                adjustments: {
-                    morning: { task: 'Strength / Pilates', type: 'ctx-self' },
-                    work1: { task: 'Deep Coding (Finishing)', type: 'ctx-biz' },
-                    work2: { task: 'Organizing / SOPs', type: 'ctx-biz' },
-                    evening: { task: 'Home Org / Prep', type: 'ctx-family' }
-                },
-                powerMoves: [ { badge: 'Biz', text: 'Close open tickets/tasks' }, { badge: 'Home', text: 'Meal Prep & Declutter' }, { badge: 'Spirit', text: 'Consistent Prayer Routine' } ]
-            }
+            menstrual: { name: 'Menstrual (Winter)', style: 'phase-menstrual', focus: 'Rest & Spiritual Reflection', note: "Energy is lowest. Prioritize spiritual grounding (Dhikr/Journaling) and deep rest.", adjustments: { morning: { task: 'Gentle Stretch / Prayer', type: 'ctx-self' }, work1: { task: 'Admin/Review (Low Energy)', type: 'ctx-biz' }, work2: { task: 'Learning/Reading', type: 'ctx-biz' }, evening: { task: 'Early Bedtime / Reflection', type: 'ctx-self' } }, powerMoves: [ { badge: 'Biz', text: 'Audit Finances & Metrics' }, { badge: 'Spirit', text: 'Increase Tahajjud/Dua (Reflection)' }, { badge: 'Self', text: 'Magnesium baths & Warm food' } ] },
+            follicular: { name: 'Follicular (Spring)', style: 'phase-follicular', focus: 'Plan & Create', note: "Energy rising. Great for brainstorming new features and planning family outings.", adjustments: { morning: { task: 'Cardio / Run', type: 'ctx-self' }, work1: { task: 'Creative Deep Work (Code)', type: 'ctx-biz' }, work2: { task: 'Project Planning', type: 'ctx-biz' }, evening: { task: 'Family Outing / Fun', type: 'ctx-family' } }, powerMoves: [ { badge: 'Biz', text: 'Start new dev features' }, { badge: 'Home', text: 'Deep Clean / Refresh Space' }, { badge: 'Baby', text: 'New sensory play setup' } ] },
+            ovulatory: { name: 'Ovulatory (Summer)', style: 'phase-ovulatory', focus: 'Connect & Pitch', note: "Peak energy & magnetism. Host gatherings, pitch clients, and prioritize connection with husband.", adjustments: { morning: { task: 'HIIT / Power Pilates', type: 'ctx-self' }, work1: { task: 'Sales Calls / Recording', type: 'ctx-biz' }, work2: { task: 'Collab / Meetings', type: 'ctx-biz' }, evening: { task: 'Date Night / Hosting', type: 'ctx-marriage' } }, powerMoves: [ { badge: 'Biz', text: 'Batch record content' }, { badge: 'Love', text: 'Prioritize intimacy' }, { badge: 'Fam', text: 'Host dinner/playdates' } ] },
+            luteal: { name: 'Luteal (Autumn)', style: 'phase-luteal', focus: 'Finish & Organize', note: "Focus narrows. Finish open loops. Prepare household logistics. Spiritual consistency is key here.", adjustments: { morning: { task: 'Strength / Pilates', type: 'ctx-self' }, work1: { task: 'Deep Coding (Finishing)', type: 'ctx-biz' }, work2: { task: 'Organizing / SOPs', type: 'ctx-biz' }, evening: { task: 'Home Org / Prep', type: 'ctx-family' } }, powerMoves: [ { badge: 'Biz', text: 'Close open tickets/tasks' }, { badge: 'Home', text: 'Meal Prep & Declutter' }, { badge: 'Spirit', text: 'Consistent Prayer Routine' } ] }
         };
 
         function recalculateTrueCycle() {
@@ -591,8 +569,69 @@
 
             displayPhase = truePhase;
             updateCycleUI(trueDay, truePhase);
+            
+            // Notification Logic: Check if we need to send an email for this phase
+            checkAndSendNotification(truePhase, trueDay);
+
             document.querySelectorAll('.preview-btn').forEach(b => b.classList.remove('active-preview'));
             setSeason(currentSeason); 
+        }
+
+        /* --- EMAIL NOTIFICATION SYSTEM --- */
+        async function checkAndSendNotification(phase, day) {
+            // Only notify for Menstrual (Day 1) or Ovulatory (Entry into phase)
+            if (phase !== 'menstrual' && phase !== 'ovulatory') return;
+
+            // Use LocalStorage to prevent duplicate emails for the same entry in the same cycle
+            const lastNotifiedEntry = localStorage.getItem('lastCycleNotified'); // Format: "phase-date"
+            const todayKey = new Date().toDateString();
+            const currentNotifKey = `${phase}-${todayKey}`;
+
+            if (lastNotifiedEntry === currentNotifKey) {
+                console.log(`Notification already sent for ${phase} today.`);
+                return;
+            }
+
+            // If we are here, it's time to send
+            const statusBox = document.getElementById('notificationStatusBox');
+            const statusText = document.getElementById('notifStatusText');
+            
+            statusText.textContent = `Triggering ${phase} email alert...`;
+
+            try {
+                // Constructing content
+                const subject = `Cycle Alert: You have entered the ${phase.toUpperCase()} phase`;
+                const message = `Hello Shafira,\n\nThis is your Holistic CEO Dashboard alert.\n\nYou are currently on Day ${day} of your cycle (${phase}).\n\nFocus: ${cycleData[phase].focus}\nAdvice: ${cycleData[phase].note}\n\nCheck your dashboard for updated OKRs and Schedule.`;
+
+                // In a real environment, you'd replace 'YOUR_FORMSPREE_ID_HERE' with your Formspree ID
+                // To avoid sending actual network requests during testing, we log it.
+                // UNCOMMENT the following lines when you have your Formspree ID:
+                /*
+                await fetch('https://formspree.io/f/xaqwwdrq', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        email: 'rafisha92@gmail.com',
+                        subject: subject,
+                        message: message
+                    })
+                });
+                */
+
+                console.log(`EMAIL SENT to hai@shafiranoh.com: ${subject}`);
+                
+                // Mark as notified
+                localStorage.setItem('lastCycleNotified', currentNotifKey);
+                
+                statusText.textContent = `Alert sent to hai@shafiranoh.com for ${phase} phase entry.`;
+                setTimeout(() => {
+                    statusText.textContent = `Email alerts active for Menstruation & Ovulation to hai@shafiranoh.com`;
+                }, 10000);
+
+            } catch (err) {
+                console.error("Email failed:", err);
+                statusText.textContent = "Email notification failed. Check internet connection.";
+            }
         }
 
         function previewPhase(phaseName) {
@@ -637,32 +676,11 @@
         const seasons = {
             nurture: {
                 departments: [
-                    { 
-                        id: 'self', icon: '🧘‍♀️', title: 'Self & Spirit', focus: 'Restoration', style: 'dept-self', 
-                        okrs: ['KR: 4x Weekly Yoga/Pilates', 'KR: Daily Quran Journaling', 'KR: Sleep 7.5h avg'],
-                        win: 'Solo spiritual retreat day (local)'
-                    },
-                    // 'baby' department is injected dynamically
-                    { 
-                        id: 'marriage', icon: '💑', title: 'Marriage & Home', focus: 'Reconnection', style: 'dept-marriage', 
-                        okrs: ['KR: Weekly Logistics Sync (Sun)', 'KR: Host 1 Calm Dinner', 'KR: Monthly In-laws Visit', 'KR: Pray Together Weekly'],
-                        win: 'Recreate our first date menu at home'
-                    },
-                    { 
-                        id: 'biz', icon: '💼', title: 'Cetalabs', focus: 'Stability (25h)', style: 'dept-biz', 
-                        okrs: ['KR: Set "Niat" before work', 'KR: Retain Members', 'KR: Maintenance Dev Only'],
-                        win: 'Record a "Founder Journey" reflection vlog'
-                    },
-                    {
-                        id: 'visibility', icon: '🎤', title: 'Visibility', focus: 'Low-Lift', style: 'dept-visibility',
-                        okrs: ['KR: Guest on 1 Podcast', 'KR: Write 1 deep LinkedIn article'],
-                        win: 'Get featured in a niche newsletter'
-                    },
-                    {
-                        id: 'impact', icon: '🌍', title: 'Impact & Cause', focus: 'Automated Giving', style: 'dept-impact',
-                        okrs: ['KR: Automate Monthly Donation', 'KR: Mentor 1 Junior (Async)'],
-                        win: 'Sponsor a student/family anonymously'
-                    }
+                    { id: 'self', icon: '🧘‍♀️', title: 'Self & Spirit', focus: 'Restoration', style: 'dept-self', okrs: ['KR: 4x Weekly Yoga/Pilates', 'KR: Daily Quran Journaling', 'KR: Sleep 7.5h avg'], win: 'Solo spiritual retreat day (local)' },
+                    { id: 'marriage', icon: '💑', title: 'Marriage & Home', focus: 'Reconnection', style: 'dept-marriage', okrs: ['KR: Weekly Logistics Sync (Sun)', 'KR: Host 1 Calm Dinner', 'KR: Monthly In-laws Visit', 'KR: Pray Together Weekly'], win: 'Recreate our first date menu at home' },
+                    { id: 'biz', icon: '💼', title: 'Cetalabs', focus: 'Stability (25h)', style: 'dept-biz', okrs: ['KR: Set "Niat" before work', 'KR: Retain Members', 'KR: Maintenance Dev Only'], win: 'Record a "Founder Journey" reflection vlog' },
+                    { id: 'visibility', icon: '🎤', title: 'Visibility', focus: 'Low-Lift', style: 'dept-visibility', okrs: ['KR: Guest on 1 Podcast', 'KR: Write 1 LinkedIn article'], win: 'Get featured in a niche newsletter' },
+                    { id: 'impact', icon: '🌍', title: 'Impact & Cause', focus: 'Automated Giving', style: 'dept-impact', okrs: ['KR: Automate Monthly Donation', 'KR: Mentor 1 Junior (Async)'], win: 'Sponsor a student/family anonymously' }
                 ],
                 baseSchedule: [
                     { time: '6:30 AM', slot: 'morning' },
@@ -678,32 +696,11 @@
             },
             balance: {
                 departments: [
-                    { 
-                        id: 'self', icon: '🧘‍♀️', title: 'Self & Spirit', focus: 'Maintenance', style: 'dept-self', 
-                        okrs: ['KR: 3x Workout', 'KR: Daily Meditation/Dhikr', 'KR: Read 1 Spiritual Book'],
-                        win: 'Finish one spiritual book & summarize'
-                    },
-                    // 'baby' injected dynamically
-                    { 
-                        id: 'marriage', icon: '💑', title: 'Marriage & Home', focus: 'Partnership', style: 'dept-marriage', 
-                        okrs: ['KR: Bi-weekly Date Night', 'KR: Visit Parents Bi-weekly', 'KR: Host 1 Social Gathering'],
-                        win: 'Weekend getaway or staycation'
-                    },
-                    { 
-                        id: 'biz', icon: '💼', title: 'Cetalabs', focus: 'Growth (30h)', style: 'dept-biz', 
-                        okrs: ['KR: Ethical/Barakah Decisions', 'KR: Grow Users', 'KR: 2 Content/wk'],
-                        win: 'Launch a new community challenge'
-                    },
-                    {
-                        id: 'visibility', icon: '🎤', title: 'Visibility', focus: 'Local Authority', style: 'dept-visibility',
-                        okrs: ['KR: Host 1 Local Workshop', 'KR: Attend 1 Networking Event'],
-                        win: 'Speak on a panel or webinar'
-                    },
-                    {
-                        id: 'impact', icon: '🌍', title: 'Impact & Cause', focus: 'Active Participation', style: 'dept-impact',
-                        okrs: ['KR: 1 Volunteer Day', 'KR: Pro-bono Consult for Non-profit'],
-                        win: 'Organize a small charity drive'
-                    }
+                    { id: 'self', icon: '🧘‍♀️', title: 'Self & Spirit', focus: 'Maintenance', style: 'dept-self', okrs: ['KR: 3x Workout', 'KR: Daily Meditation/Dhikr', 'KR: Read 1 Spiritual Book'], win: 'Finish one spiritual book & summarize' },
+                    { id: 'marriage', icon: '💑', title: 'Marriage & Home', focus: 'Partnership', style: 'dept-marriage', okrs: ['KR: Bi-weekly Date Night', 'KR: Visit Parents Bi-weekly', 'KR: Host 1 Social Gathering'], win: 'Weekend getaway or staycation' },
+                    { id: 'biz', icon: '💼', title: 'Cetalabs', focus: 'Growth (30h)', style: 'dept-biz', okrs: ['KR: Ethical Decisions', 'KR: Grow Users', 'KR: 2 Content/wk'], win: 'Launch a community challenge' },
+                    { id: 'visibility', icon: '🎤', title: 'Visibility', focus: 'Local Authority', style: 'dept-visibility', okrs: ['KR: Host 1 Local Workshop', 'KR: Attend 1 Networking Event'], win: 'Speak on a panel or webinar' },
+                    { id: 'impact', icon: '🌍', title: 'Impact', focus: 'Participation', style: 'dept-impact', okrs: ['KR: 1 Volunteer Day', 'KR: Pro-bono Consult'], win: 'Organize a charity drive' }
                 ],
                 baseSchedule: [
                     { time: '6:30 AM', slot: 'morning' },
@@ -718,32 +715,11 @@
             },
             sprint: {
                 departments: [
-                    { 
-                        id: 'self', icon: '🧘‍♀️', title: 'Self & Spirit', focus: 'Min. Dose', style: 'dept-self', 
-                        okrs: ['KR: 15m Prayer/Dhikr', 'KR: 10pm Sleep', 'KR: 15m Movement'],
-                        win: 'Complete a 30-day gratitude journal'
-                    },
-                    // 'baby' injected dynamically
-                    { 
-                        id: 'marriage', icon: '💑', title: 'Marriage & Home', focus: 'Support', style: 'dept-marriage', 
-                        okrs: ['KR: Monthly Date', 'KR: Outsourced Cleaning', 'KR: Quick Daily Connect'],
-                        win: 'Surprise gift for spouse'
-                    },
-                    { 
-                        id: 'biz', icon: '💼', title: 'Cetalabs', focus: 'Scale (35h+)', style: 'dept-biz', 
-                        okrs: ['KR: Donate % of Profit', 'KR: Hire VA', 'KR: 2 Corp Deals'],
-                        win: 'Close a major partnership deal'
-                    },
-                    {
-                        id: 'visibility', icon: '🎤', title: 'Visibility', focus: 'Thought Leadership', style: 'dept-visibility',
-                        okrs: ['KR: Keynote/Major Conf', 'KR: Launch PR Campaign'],
-                        win: 'Get interviewed by a major industry outlet'
-                    },
-                    {
-                        id: 'impact', icon: '🌍', title: 'Impact & Cause', focus: 'Strategic Giving', style: 'dept-impact',
-                        okrs: ['KR: Launch Scholarship/Grant', 'KR: Host Fundraising Event'],
-                        win: 'Fully fund a specific community project'
-                    }
+                    { id: 'self', icon: '🧘‍♀️', title: 'Self & Spirit', focus: 'Min. Dose', style: 'dept-self', okrs: ['KR: 15m Prayer/Dhikr', 'KR: 10pm Sleep', 'KR: 15m Movement'], win: '30-day gratitude journal' },
+                    { id: 'marriage', icon: '💑', title: 'Marriage & Home', focus: 'Support', style: 'dept-marriage', okrs: ['KR: Monthly Date', 'KR: Outsourced Cleaning', 'KR: Daily Connect'], win: 'Surprise gift for spouse' },
+                    { id: 'biz', icon: '💼', title: 'Cetalabs', focus: 'Scale (35h+)', style: 'dept-biz', okrs: ['KR: Donate % of Profit', 'KR: Hire VA', 'KR: 2 Corp Deals'], win: 'Close a major partnership' },
+                    { id: 'visibility', icon: '🎤', title: 'Visibility', focus: 'Thought Leadership', style: 'dept-visibility', okrs: ['KR: Keynote/Major Conf', 'KR: Launch PR Campaign'], win: 'Major industry interview' },
+                    { id: 'impact', icon: '🌍', title: 'Impact', focus: 'Strategic Giving', style: 'dept-impact', okrs: ['KR: Launch Scholarship', 'KR: Fundraising Event'], win: 'Fund a community project' }
                 ],
                 baseSchedule: [
                     { time: '6:00 AM', slot: 'morning' },
@@ -761,20 +737,16 @@
         function setSeason(season) {
             currentSeason = season;
             document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-            document.querySelector(`.tab-${season}`).classList.add('active');
+            const activeBtn = document.querySelector(`.tab-${season}`);
+            if (activeBtn) activeBtn.classList.add('active');
 
             const data = seasons[season];
             const cData = cycleData[displayPhase];
             
-            // Inject correct Life Stage data into departments
             const currentLifeData = lifeStageData[currentLifeStage];
-            
-            // Clone departments to avoid mutating original
             let displayDepts = [...data.departments];
-            // Insert Life Stage dept at index 1 (after Self)
             displayDepts.splice(1, 0, currentLifeData);
 
-            // 1. Render Departments
             const deptHTML = displayDepts.map(d => `
                 <div class="dept-card ${d.style}">
                     <div>
@@ -793,7 +765,6 @@
             `).join('');
             document.getElementById('deptContainer').innerHTML = deptHTML;
 
-            // 2. Schedule
             document.getElementById('cycleNote').innerHTML = `<strong>${cData.name} Phase Tip:</strong> ${cData.note}`;
             
             const timeHTML = data.baseSchedule.map(s => {
@@ -818,7 +789,6 @@
             }).join('');
             document.getElementById('timeGrid').innerHTML = timeHTML;
 
-            // 3. Lists
             const renderList = (items) => items.map(i => `
                 <div class="cl-item">
                     <span class="cl-badge">${i.badge}</span>

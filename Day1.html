@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cycle Update for R</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Playfair+Display:ital,wght@0,600;1,600&display=swap');
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #fafaf9;
+        }
+        .serif {
+            font-family: 'Playfair Display', serif;
+        }
+        .gradient-bg {
+            background: linear-gradient(135deg, #fff1f2 0%, #fff7ed 100%);
+        }
+    </style>
+</head>
+<body class="p-4 md:p-8">
+
+    <div class="max-w-2xl mx-auto bg-white rounded-3xl shadow-sm border border-rose-100 overflow-hidden">
+        <!-- Header Image/Banner -->
+        <div class="h-32 gradient-bg flex items-center justify-center border-b border-rose-50">
+            <span class="text-4xl">🌸</span>
+        </div>
+
+        <div class="p-8">
+            <div class="flex justify-between items-start mb-6">
+                <div>
+                    <h1 class="serif text-3xl text-rose-900 mb-1 italic">Cycle Update</h1>
+                    <p class="text-rose-400 font-medium" id="current-date"></p>
+                </div>
+                <div class="bg-rose-50 px-4 py-1 rounded-full border border-rose-100">
+                    <span class="text-rose-600 text-sm font-semibold uppercase tracking-widest">Phase: Menstrual</span>
+                </div>
+            </div>
+
+            <div class="space-y-6 text-slate-700 leading-relaxed">
+                <p class="text-lg">
+                    Hi R, just a heads up—my period started today. Here is a quick look at what this phase (Winter) looks like for me and how you can support me.
+                </p>
+
+                <div class="bg-slate-50 rounded-2xl p-6 border border-slate-100">
+                    <h2 class="font-semibold text-slate-900 mb-4 flex items-center gap-2">
+                        <span>💡</span> Briefing for R
+                    </h2>
+                    <ul class="space-y-4 text-sm">
+                        <li class="flex gap-3">
+                            <span class="text-rose-500 font-bold">•</span>
+                            <span><strong>Energy Level:</strong> My hormones (estrogen and progesterone) are at their lowest right now. I'll likely feel more tired and need extra rest.</span>
+                        </li>
+                        <li class="flex gap-3">
+                            <span class="text-rose-500 font-bold">•</span>
+                            <span><strong>The Vibe:</strong> This is my "Inner Winter." I might be more introverted or quiet. It’s a time for reflection rather than high-energy socializing.</span>
+                        </li>
+                        <li class="flex gap-3">
+                            <span class="text-rose-500 font-bold">•</span>
+                            <span><strong>Support Moves:</strong> Warm drinks, a heating pad, or just keeping the evening low-pressure helps a lot. Grace and patience are my favorite gifts right now.</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="italic text-slate-500 text-center py-4 serif">
+                    "Thank you for being my partner through every season."
+                </div>
+            </div>
+
+            <!-- Action Area -->
+            <div class="mt-8 pt-8 border-t border-slate-100 text-center">
+                <button 
+                    onclick="sendEmail()" 
+                    id="send-btn"
+                    class="w-full md:w-auto bg-rose-600 hover:bg-rose-700 text-white font-semibold py-4 px-10 rounded-2xl transition-all shadow-lg shadow-rose-200 active:scale-95"
+                >
+                    Send to R's Email
+                </button>
+                <p id="status-message" class="mt-4 text-sm font-medium"></p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // CONFIGURATION: Replace with your Formspree ID
+        const FORMSPREE_ID = "xaqwwdrq";
+        const RECIPIENT_EMAIL = "rafisha92@gmail.com"; // Put his email here
+
+        // Set Date
+        const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+        const today = new Date();
+        document.getElementById('current-date').textContent = today.toLocaleDateString('en-US', options);
+
+        async function sendEmail() {
+            const btn = document.getElementById('send-btn');
+            const status = document.getElementById('status-message');
+            
+            btn.disabled = true;
+            btn.textContent = "Sending Update...";
+            status.textContent = "";
+
+            try {
+                const response = await fetch(`https://formspree.io/f/${FORMSPREE_ID}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        _replyto: "hai@shafiranoh.com",
+                        _subject: `Cycle Update: Menstruation Started - ${today.toLocaleDateString()}`,
+                        message: `
+Hi R,
+
+My period started today, ${today.toLocaleDateString()}.
+
+Quick Phase Summary:
+- Energy: Low (Winter Phase)
+- Focus: Rest & Reflection
+- Support needed: Low-pressure environment, warmth, and a little extra grace.
+
+Check the dashboard for more info. Love you!
+                        `
+                    })
+                });
+
+                if (response.ok) {
+                    status.className = "mt-4 text-sm font-medium text-emerald-600";
+                    status.textContent = "✅ Update successfully sent to R.";
+                    btn.textContent = "Update Sent";
+                    btn.classList.replace('bg-rose-600', 'bg-emerald-600');
+                } else {
+                    throw new Error('Failed to send');
+                }
+            } catch (error) {
+                status.className = "mt-4 text-sm font-medium text-rose-600";
+                status.textContent = "❌ Error sending email. Check Formspree ID.";
+                btn.disabled = false;
+                btn.textContent = "Retry Sending";
+            }
+        }
+    </script>
+</body>
+</html>

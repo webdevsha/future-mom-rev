@@ -249,11 +249,11 @@
                 </div>
 
                 <div class="preview-bar">
-                    <button class="preview-btn" onclick="previewPhase('menstrual')">Menstrual</button>
-                    <button class="preview-btn" onclick="previewPhase('follicular')">Follicular</button>
-                    <button class="preview-btn" onclick="previewPhase('ovulatory')">Ovulatory</button>
-                    <button class="preview-btn" onclick="previewPhase('luteal')">Luteal</button>
-                    <button class="reset-btn" onclick="recalculateTrueCycle()">↺ Reset to Today</button>
+                    <button id="btn-menstrual" class="preview-btn" onclick="previewPhase('menstrual')">Menstrual</button>
+                    <button id="btn-follicular" class="preview-btn" onclick="previewPhase('follicular')">Follicular</button>
+                    <button id="btn-ovulatory" class="preview-btn" onclick="previewPhase('ovulatory')">Ovulatory</button>
+                    <button id="btn-luteal" class="preview-btn" onclick="previewPhase('luteal')">Luteal</button>
+                    <button class="reset-btn" onclick="resetToToday()">↺ Reset to Today</button>
                 </div>
             </div>
         </div>
@@ -299,15 +299,15 @@
     </div>
 
     <script>
-        // --- EMAILJS CONFIG (Update with your keys) ---
+        // --- EMAILJS CONFIG ---
         const EMAILJS_PUBLIC_KEY = "EONydXun8_CTmWkl7";
         const EMAILJS_SERVICE_ID = "service_87zo2da"; 
         const EMAILJS_TEMPLATE_ID = "template_942d8wt"; 
-        const RECIPIENT_EMAIL = "nshfnoh@proton.me, mrazld.hamdan@gmail.com"; // Comma-separated for multiple
+        const RECIPIENT_EMAIL = "nshfnoh@proton.me, mrazld.hamdan@gmail.com"; // R's email
 
         if (EMAILJS_PUBLIC_KEY) emailjs.init(EMAILJS_PUBLIC_KEY);
 
-        /* --- DATA OBJECTS (UNCHANGED CONTENT) --- */
+        /* --- DATA OBJECTS (MAINTAINED CONTENT) --- */
         const lifeStageData = {
             preparing: { id: 'baby', icon: '🌱', title: 'Preparing', focus: 'Health & Calm', style: 'dept-baby', okrs: ['KR: Daily Folic Acid & Supps', 'KR: Track Cycle Consistently', 'KR: Reduce Stress (Cortisol)', 'KR: Health Checkup'], win: 'Book a "Pre-Baby" couples spa day' },
             pregnancy: { id: 'baby', icon: '🤰', title: 'Pregnancy', focus: 'Nesting & Health', style: 'dept-baby', okrs: ['KR: Hypnobirthing Course', 'KR: Daily Pelvic Floor', 'KR: Nursery Setup', 'KR: Read 1 Birth Book'], win: 'Start a pregnancy journal' },
@@ -316,7 +316,7 @@
         };
 
         const cycleData = {
-            menstrual: { name: 'Menstrual (Winter)', style: 'phase-menstrual', focus: 'Rest & Spiritual Reflection', note: "Energy is lowest. Body is resetting—prostaglandins + lower iron.Prioritize spiritual grounding and deep rest.", color: '#be185d', emoji: '❄️', adjustments: { morning: { task: 'Gentle Stretch / Prayer', type: 'ctx-self' }, work1: { task: 'Admin/Review (Low Energy)', type: 'ctx-biz' }, work2: { task: 'Learning/Reading', type: 'ctx-biz' }, evening: { task: 'Early Bedtime', type: 'ctx-self' } }, powerMoves: [{badge: 'Biz', text: 'Audit Finances'}, {badge: 'Spirit', text: 'Reflection/Dua'}] },
+            menstrual: { name: 'Menstrual (Winter)', style: 'phase-menstrual', focus: 'Rest & Spiritual Reflection', note: "Energy is lowest. Body is resetting—prostaglandins + lower iron. Prioritize spiritual grounding and deep rest.", color: '#be185d', emoji: '❄️', adjustments: { morning: { task: 'Gentle Stretch / Prayer', type: 'ctx-self' }, work1: { task: 'Admin/Review (Low Energy)', type: 'ctx-biz' }, work2: { task: 'Learning/Reading', type: 'ctx-biz' }, evening: { task: 'Early Bedtime', type: 'ctx-self' } }, powerMoves: [{badge: 'Biz', text: 'Audit Finances'}, {badge: 'Spirit', text: 'Reflection/Dua'}] },
             follicular: { name: 'Follicular (Spring)', style: 'phase-follicular', focus: 'Plan & Create', note: "Energy rising. Great for brainstorming new features and planning outings.", color: '#15803d', emoji: '🌱', adjustments: { morning: { task: 'Cardio / Run', type: 'ctx-self' }, work1: { task: 'Creative Deep Work', type: 'ctx-biz' }, work2: { task: 'Project Planning', type: 'ctx-biz' }, evening: { task: 'Family Outing', type: 'ctx-family' } }, powerMoves: [{badge: 'Biz', text: 'Start new features'}, {badge: 'Home', text: 'Deep Clean'}] },
             ovulatory: { name: 'Ovulatory (Summer)', style: 'phase-ovulatory', focus: 'Connect & Pitch', note: "Peak energy & magnetism. Host gatherings, pitch clients, and prioritize connection.", color: '#a16207', emoji: '☀️', adjustments: { morning: { task: 'Power Pilates', type: 'ctx-self' }, work1: { task: 'Sales Calls / Recording', type: 'ctx-biz' }, work2: { task: 'Meetings', type: 'ctx-biz' }, evening: { task: 'Date Night', type: 'ctx-marriage' } }, powerMoves: [{badge: 'Biz', text: 'Batch record content'}, {badge: 'Love', text: 'Prioritize intimacy'}] },
             luteal: { name: 'Luteal (Autumn)', style: 'phase-luteal', focus: 'Finish & Organize', note: "Progesterone = nesting mode, then serotonin drops = sensitivity spikes. Focus narrows. Finish open loops. Prepare household logistics.", color: '#c2410c', emoji: '🍂', adjustments: { morning: { task: 'Strength Training', type: 'ctx-self' }, work1: { task: 'Deep Coding', type: 'ctx-biz' }, work2: { task: 'Organizing / SOPs', type: 'ctx-biz' }, evening: { task: 'Home Prep', type: 'ctx-family' } }, powerMoves: [{badge: 'Biz', text: 'Close open tickets'}, {badge: 'Home', text: 'Meal Prep'}] }
@@ -387,6 +387,7 @@
         let truePhase = 'menstrual'; 
         let displayPhase = 'menstrual'; 
         let trueDay = 1;
+        let displayDay = 1; // Separate tracking for previewed day
         let currentLifeStage = 'parenting'; 
         const cycleLength = 28;
         let currentSeason = 'nurture';
@@ -409,13 +410,29 @@
             nextPeriod.setDate(startDate.getDate() + cycleLength);
             document.getElementById('nextPeriodDate').textContent = nextPeriod.toLocaleDateString();
 
-            displayPhase = truePhase;
-            updateCycleUI(trueDay, truePhase);
+            // When recalculating, if we aren't in a "preview" mode, update display
+            if (!document.querySelector('.active-preview')) {
+                displayPhase = truePhase;
+                displayDay = trueDay;
+                updateCycleUI(trueDay, truePhase);
+            }
+            
             checkAutoEmailTriggers(truePhase, trueDay);
             setSeason(currentSeason); 
         }
 
-        /* --- PARTNER SYNC EMAIL ENGINE (FUNCTIONAL) --- */
+        function resetToToday() {
+            // Remove active preview styling
+            document.querySelectorAll('.preview-btn').forEach(b => b.classList.remove('active-preview'));
+            
+            // Sync display back to biological reality
+            displayPhase = truePhase;
+            displayDay = trueDay;
+            updateCycleUI(trueDay, truePhase);
+            setSeason(currentSeason);
+        }
+
+        /* --- PARTNER SYNC EMAIL ENGINE --- */
         async function sendCycleEmail(phaseKey, day, isManual = false) {
             const phase = cycleData[phaseKey];
             const btn = document.getElementById('manualSyncBtn');
@@ -426,6 +443,7 @@
                 btn.textContent = "Sending...";
             }
 
+            // Calculation of the specific date for the email
             const startDateInput = document.getElementById('lastPeriodInput').value;
             const startDateObj = new Date(startDateInput);
             const contentDateObj = new Date(startDateObj);
@@ -435,7 +453,6 @@
             const shortDateForSubject = contentDateObj.toLocaleDateString('en-US', { day: 'numeric', month: 'long' });
             const supportTips = getSupportTips(phaseKey);
 
-            // GENERATE HTML BODY INTERNALLY
             const emailHtml = `
                 <div style="font-family: sans-serif; background-color: #fafaf9; padding: 20px; color: #334155;">
                     <div style="max-width: 600px; margin: 0 auto; background: white; border-radius: 20px; overflow: hidden; border: 1px solid #fee2e2;">
@@ -452,20 +469,17 @@
                                     <span style="color: #e11d48; font-weight: bold; font-size: 12px; text-transform: uppercase;">Phase: ${phase.name}</span>
                                 </div>
                             </div>
-                            <p style="font-size: 16px; line-height: 1.6;">Hi Sayang, just a heads up on my biology status for this specific date. Here's a quick briefing for this phase.</p>
+                            <p style="font-size: 16px; line-height: 1.6;">Hi Sayang, just a heads up on my biology status for this date. Here's a quick briefing for this phase.</p>
                             <div style="background: #f8fafc; border-radius: 15px; padding: 20px; border: 1px solid #f1f5f9; margin: 20px 0;">
                                 <h2 style="font-size: 16px; color: #0f172a; margin-top: 0;">💡 Briefing for Sayang</h2>
                                 <ul style="list-style: none; padding: 0;">
-                                    <li style="margin-bottom: 15px; display: flex; align-items: flex-start;">
-                                        <span style="color: #fb7185; font-weight: bold; margin-right: 10px;">•</span>
+                                    <li style="margin-bottom: 15px;">
                                         <span><strong>Energy Level:</strong> ${phase.note}</span>
                                     </li>
-                                    <li style="margin-bottom: 15px; display: flex; align-items: flex-start;">
-                                        <span style="color: #fb7185; font-weight: bold; margin-right: 10px;">•</span>
+                                    <li style="margin-bottom: 15px;">
                                         <span><strong>Focus:</strong> ${phase.focus}</span>
                                     </li>
-                                    <li style="margin-bottom: 0; display: flex; align-items: flex-start;">
-                                        <span style="color: #fb7185; font-weight: bold; margin-right: 10px;">•</span>
+                                    <li style="margin-bottom: 0;">
                                         <span><strong>Support Moves:</strong> ${supportTips}</span>
                                     </li>
                                 </ul>
@@ -531,8 +545,14 @@
             }
         }
 
-        function sendManualUpdate() { sendCycleEmail(displayPhase, trueDay, true); }
-        function saveSyncPrefs() { localStorage.setItem('autoSyncEnabled', document.getElementById('autoSyncToggle').checked); }
+        function sendManualUpdate() { 
+            // Send email based on the DISPLAYED phase and day
+            sendCycleEmail(displayPhase, displayDay, true); 
+        }
+
+        function saveSyncPrefs() { 
+            localStorage.setItem('autoSyncEnabled', document.getElementById('autoSyncToggle').checked); 
+        }
 
         function updateCycleUI(day, phase, isPreview = false) {
             const data = cycleData[phase];
@@ -549,17 +569,26 @@
         function previewPhase(phaseName) {
             displayPhase = phaseName;
             document.querySelectorAll('.preview-btn').forEach(b => b.classList.remove('active-preview'));
-            event.target.classList.add('active-preview');
-            let previewDay = 1;
-            if (phaseName === 'follicular') previewDay = 7;
-            else if (phaseName === 'ovulatory') previewDay = 14;
-            else if (phaseName === 'luteal') previewDay = 22;
-            updateCycleUI(previewDay, phaseName, true); 
+            document.getElementById(`btn-${phaseName}`).classList.add('active-preview');
+            
+            // Assign a logic day for each preview to facilitate email date calculation
+            if (phaseName === 'menstrual') displayDay = 1;
+            else if (phaseName === 'follicular') displayDay = 7;
+            else if (phaseName === 'ovulatory') displayDay = 14;
+            else if (phaseName === 'luteal') displayDay = 22;
+            
+            updateCycleUI(displayDay, phaseName, true); 
             setSeason(currentSeason);
         }
 
-        function toggleWidget() { document.getElementById('cycleBody').classList.toggle('collapsed'); }
-        function updateLifeStage() { currentLifeStage = document.getElementById('lifeStageSelect').value; setSeason(currentSeason); }
+        function toggleWidget() { 
+            document.getElementById('cycleBody').classList.toggle('collapsed'); 
+        }
+
+        function updateLifeStage() { 
+            currentLifeStage = document.getElementById('lifeStageSelect').value; 
+            setSeason(currentSeason); 
+        }
 
         function setSeason(season) {
             currentSeason = season;
@@ -602,9 +631,16 @@
         }
 
         // Init
-        const storedSync = localStorage.getItem('autoSyncEnabled');
-        if (storedSync !== null) document.getElementById('autoSyncToggle').checked = (storedSync === 'true');
-        recalculateTrueCycle();
+        window.onload = function() {
+            const storedSync = localStorage.getItem('autoSyncEnabled');
+            if (storedSync !== null) document.getElementById('autoSyncToggle').checked = (storedSync === 'true');
+            
+            // Initial call to set state based on default date
+            recalculateTrueCycle();
+            
+            // Start the dashboard in the 'true' state
+            resetToToday();
+        };
     </script>
 </body>
 </html>

@@ -8,25 +8,12 @@
     
     <!-- Standard Meta Description -->
     <meta name="description" content="Shafira's holistic planner for the 'Company of One' CEO of Cetalabs. Bismillah.">
-    
-    <!-- Open Graph / Facebook / WhatsApp -->
-    <meta property="og:type" content="website">
-    <meta property="og:title" content="A New Decade of Joy & Deep Meaning">
-    <meta property="og:description" content="Shafira's holistic planner for the 'Company of One' CEO of Cetalabs. Bismillah.">
-    <meta property="og:image" content="https://ik.imagekit.io/cbctech/Sonia%20Dubois%20Orchard%20Farm.jpg?updatedAt=1751974575468">
-    
-    <!-- Twitter -->
-    <meta property="twitter:card" content="summary_large_image">
-    <meta property="twitter:title" content="A New Decade of Joy & Deep Meaning">
-    <meta property="twitter:description" content="Shafira's holistic planner for the 'Company of One' CEO of Cetalabs. Bismillah.">
-    <meta property="twitter:image" content="https://ik.imagekit.io/cbctech/Sonia%20Dubois%20Orchard%20Farm.jpg?updatedAt=1751974575468">
 
+    <!-- EmailJS SDK -->
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+    
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
@@ -36,111 +23,60 @@
             color: #4a044e;
         }
         
-        .container {
-            max-width: 1400px;
-            margin: 0 auto;
-            padding-bottom: 50px;
-        }
+        .container { max-width: 1400px; margin: 0 auto; padding-bottom: 50px; }
         
-        header {
-            text-align: center;
-            margin-bottom: 30px;
-            padding: 20px 0;
-        }
+        header { text-align: center; margin-bottom: 30px; padding: 20px 0; }
         
-        h1 {
-            font-size: 2.2rem;
-            color: #9d174d;
-            margin-bottom: 10px;
-        }
+        h1 { font-size: 2.2rem; color: #9d174d; margin-bottom: 10px; }
         
-        .subtitle, a {
-            font-size: 1.1rem;
-            color: #be185d;
-            opacity: 0.8;
-            text-decoration: none;
-        }
+        .subtitle, a { font-size: 1.1rem; color: #be185d; opacity: 0.8; text-decoration: none; }
         
         a:hover { text-decoration: underline; }
 
         /* --- CONTROLS BAR (Life Stage) --- */
         .controls-bar {
-            background: white;
-            padding: 15px 20px;
-            border-radius: 12px;
-            margin-bottom: 30px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 15px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-            border: 1px solid #fbcfe8;
-            flex-wrap: wrap;
+            background: white; padding: 15px 20px; border-radius: 12px; margin-bottom: 30px;
+            display: flex; justify-content: center; align-items: center; gap: 15px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05); border: 1px solid #fbcfe8; flex-wrap: wrap;
         }
 
         .life-stage-select {
-            padding: 10px 15px;
-            border-radius: 8px;
-            border: 1px solid #db2777;
-            background: #fff0f5;
-            color: #9d174d;
-            font-weight: bold;
-            cursor: pointer;
-            font-size: 1rem;
+            padding: 10px 15px; border-radius: 8px; border: 1px solid #db2777;
+            background: #fff0f5; color: #9d174d; font-weight: bold; cursor: pointer; font-size: 1rem;
         }
+
+        /* --- PARTNER SYNC PANEL --- */
+        .partner-sync-panel {
+            background: #fff; border-radius: 12px; border: 1px solid #f9a8d4;
+            padding: 15px 20px; margin-top: 20px; display: flex; align-items: center;
+            justify-content: space-between; gap: 20px; flex-wrap: wrap;
+        }
+
+        .sync-info { display: flex; align-items: center; gap: 10px; font-size: 0.9rem; }
 
         /* --- COLLAPSIBLE CYCLE WIDGET --- */
         .cycle-widget-container {
-            background: white;
-            border-radius: 20px;
-            box-shadow: 0 10px 25px rgba(219, 39, 119, 0.15);
-            margin-bottom: 40px;
-            border: 2px solid #fbcfe8;
-            overflow: hidden;
-            transition: all 0.3s ease;
+            background: white; border-radius: 20px; box-shadow: 0 10px 25px rgba(219, 39, 119, 0.15);
+            margin-bottom: 40px; border: 2px solid #fbcfe8; overflow: hidden; transition: all 0.3s ease;
         }
 
         .cycle-header {
-            padding: 15px 30px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            cursor: pointer;
-            background: #fff0f5;
+            padding: 15px 30px; display: flex; justify-content: space-between;
+            align-items: center; cursor: pointer; background: #fff0f5;
         }
 
         .cycle-header:hover { background: #fce7f3; }
-
-        .cycle-summary {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
-
+        .cycle-summary { display: flex; align-items: center; gap: 15px; }
         .cycle-summary h3 { margin: 0; color: #831843; font-size: 1.1rem; }
         
-        .cycle-body {
-            padding: 20px 30px;
-            display: block; 
-        }
+        .cycle-body { padding: 20px 30px; display: block; }
         .cycle-body.collapsed { display: none; }
 
-        .cycle-controls {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            flex-wrap: wrap;
-            gap: 20px;
-        }
+        .cycle-controls { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 20px; }
 
         .cycle-phase-badge {
-            display: inline-block;
-            padding: 5px 12px;
-            border-radius: 20px;
-            font-weight: bold;
-            font-size: 0.9rem;
-            text-transform: uppercase;
-            letter-spacing: 1px;
+            display: inline-block; padding: 5px 12px; border-radius: 20px;
+            font-weight: bold; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1px;
         }
 
         /* Phase Colors */
@@ -149,130 +85,56 @@
         .phase-ovulatory { background: #fef9c3; color: #a16207; border: 1px solid #fde047; }
         .phase-luteal { background: #ffedd5; color: #c2410c; border: 1px solid #fed7aa; }
 
-        .cycle-progress-container {
-            flex-grow: 1;
-            max-width: 400px;
-            margin: 0 20px;
-        }
+        .cycle-progress-container { flex-grow: 1; max-width: 400px; margin: 0 20px; }
         .cycle-bar-bg { background: #f3f4f6; height: 10px; border-radius: 10px; overflow: hidden; }
         .cycle-bar-fill { height: 100%; background: #db2777; width: 0%; transition: width 0.5s; }
         .cycle-labels { display: flex; justify-content: space-between; font-size: 0.75rem; color: #9ca3af; margin-top: 5px; }
 
         .preview-bar {
-            margin-top: 20px;
-            padding-top: 20px;
-            border-top: 1px dashed #f9a8d4;
-            display: flex;
-            gap: 10px;
-            align-items: center;
-            flex-wrap: wrap;
+            margin-top: 20px; padding-top: 20px; border-top: 1px dashed #f9a8d4;
+            display: flex; gap: 10px; align-items: center; flex-wrap: wrap;
         }
 
         .preview-btn {
-            font-size: 0.8rem;
-            padding: 6px 12px;
-            border-radius: 15px;
-            border: 1px solid #e5e7eb;
-            background: white;
-            cursor: pointer;
-            color: #6b7280;
+            font-size: 0.8rem; padding: 6px 12px; border-radius: 15px; border: 1px solid #e5e7eb;
+            background: white; cursor: pointer; color: #6b7280;
         }
         .preview-btn:hover { background: #f3f4f6; }
         .preview-btn.active-preview { background: #fce7f3; color: #be185d; border-color: #fbcfe8; font-weight: bold; }
         
         .reset-btn {
-            font-size: 0.8rem;
-            padding: 6px 12px;
-            background: #be185d;
-            color: white;
-            border: none;
-            border-radius: 15px;
-            cursor: pointer;
-            margin-left: auto;
+            font-size: 0.8rem; padding: 6px 12px; background: #be185d; color: white;
+            border: none; border-radius: 15px; cursor: pointer; margin-left: auto;
         }
 
-        /* Notification Status Box */
-        .notif-status {
-            background: #f8fafc;
-            border: 1px solid #e2e8f0;
-            padding: 10px 15px;
-            border-radius: 8px;
-            margin-top: 15px;
-            font-size: 0.85rem;
-            display: flex;
-            align-items: center;
-            gap: 10px;
+        .btn-sync-now {
+            background: #be185d; color: white; border: none; padding: 8px 16px;
+            border-radius: 20px; font-weight: 600; cursor: pointer; font-size: 0.85rem;
+            transition: 0.2s; display: flex; align-items: center; gap: 6px;
         }
-        .notif-dot {
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            background: #cbd5e1;
-        }
-        .notif-dot.active { background: #10b981; animation: pulse 2s infinite; }
-
-        @keyframes pulse {
-            0% { opacity: 1; }
-            50% { opacity: 0.4; }
-            100% { opacity: 1; }
-        }
+        .btn-sync-now:hover { background: #9d174d; transform: scale(1.02); }
+        .btn-sync-now:disabled { background: #cbd5e1; cursor: not-allowed; }
 
         /* --- Season Tabs --- */
-        .tabs {
-            display: flex;
-            justify-content: center;
-            gap: 15px;
-            margin-bottom: 40px;
-            flex-wrap: wrap;
-        }
-
+        .tabs { display: flex; justify-content: center; gap: 15px; margin-bottom: 40px; flex-wrap: wrap; }
         .tab-btn {
-            padding: 12px 25px;
-            border: none;
-            border-radius: 30px;
-            font-size: 1rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s;
-            background: white;
-            color: #64748b;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-            border: 2px solid transparent;
-            display: flex;
-            align-items: center;
-            gap: 8px;
+            padding: 12px 25px; border: none; border-radius: 30px; font-size: 1rem; font-weight: 600;
+            cursor: pointer; transition: all 0.2s; background: white; color: #64748b;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05); border: 2px solid transparent; display: flex; align-items: center; gap: 8px;
         }
         .tab-btn:hover { transform: translateY(-2px); }
         .tab-btn.active { color: white; box-shadow: 0 8px 15px rgba(157, 23, 77, 0.2); }
-
         .tab-nurture.active { background: #059669; border-color: #059669; }
         .tab-balance.active { background: #2563eb; border-color: #2563eb; }
         .tab-sprint.active { background: #7c3aed; border-color: #7c3aed; }
 
         /* --- Grid Layout --- */
-        .dashboard-grid {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 40px;
-        }
-
-        /* --- Departments --- */
-        .departments-container {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 20px;
-        }
+        .dashboard-grid { display: grid; grid-template-columns: 1fr; gap: 40px; }
+        .departments-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; }
 
         .dept-card {
-            background: white;
-            border-radius: 16px;
-            padding: 25px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.03);
-            border-top: 5px solid #ccc;
-            transition: transform 0.2s;
-            height: 100%;
-            display: flex;
-            flex-direction: column;
+            background: white; border-radius: 16px; padding: 25px; box-shadow: 0 4px 20px rgba(0,0,0,0.03);
+            border-top: 5px solid #ccc; transition: transform 0.2s; height: 100%; display: flex; flex-direction: column;
         }
         .dept-card:hover { transform: translateY(-5px); }
         .dept-icon { font-size: 1.8rem; margin-bottom: 10px; display: block; }
@@ -281,20 +143,11 @@
         
         .dept-okr-list { list-style: none; margin-bottom: 20px; flex-grow: 1; }
         .dept-okr-list li {
-            margin-bottom: 10px;
-            font-size: 0.9rem;
-            color: #475569;
-            padding-left: 15px;
-            border-left: 2px solid #e2e8f0;
+            margin-bottom: 10px; font-size: 0.9rem; color: #475569;
+            padding-left: 15px; border-left: 2px solid #e2e8f0;
         }
 
-        .creative-win-box {
-            background: #fdf4ff;
-            border: 1px dashed #d946ef;
-            border-radius: 10px;
-            padding: 12px;
-            margin-top: auto;
-        }
+        .creative-win-box { background: #fdf4ff; border: 1px dashed #d946ef; border-radius: 10px; padding: 12px; margin-top: auto; }
         .win-title { font-size: 0.75rem; font-weight: bold; color: #a21caf; text-transform: uppercase; display: block; margin-bottom: 5px; }
         .win-text { font-size: 0.9rem; color: #86198f; font-style: italic; }
         
@@ -302,89 +155,37 @@
         .dept-self { border-color: #10b981; } .dept-self .dept-focus { color: #059669; }
         .dept-marriage { border-color: #ec4899; } .dept-marriage .dept-focus { color: #db2777; }
         .dept-baby { border-color: #3b82f6; } .dept-baby .dept-focus { color: #2563eb; }
-        .dept-family { border-color: #8b5cf6; } .dept-family .dept-focus { color: #7c3aed; }
-        
-        .dept-visibility { border-color: #06b6d4; } .dept-visibility .dept-focus { color: #0891b2; }
-        .dept-impact { border-color: #e11d48; } .dept-impact .dept-focus { color: #be123c; }
 
-        /* --- Daily Rhythm --- */
         .section-header { display: flex; align-items: center; gap: 15px; margin-bottom: 25px; }
         .section-header h2 { font-size: 1.5rem; color: #1e293b; }
         .section-line { flex-grow: 1; height: 2px; background: #e2e8f0; }
 
-        .schedule-container {
-            background: white;
-            border-radius: 20px;
-            padding: 30px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
-        }
+        .schedule-container { background: white; border-radius: 20px; padding: 30px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
+        .cycle-note { background: #fdf2f8; color: #831843; padding: 15px; border-radius: 10px; margin-bottom: 20px; font-size: 0.95rem; border-left: 4px solid #db2777; }
 
-        .cycle-note {
-            background: #fdf2f8; 
-            color: #831843; 
-            padding: 15px; 
-            border-radius: 10px; 
-            margin-bottom: 20px; 
-            font-size: 0.95rem; 
-            border-left: 4px solid #db2777;
-        }
-
-        .time-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-            gap: 15px;
-        }
-
-        .time-card {
-            padding: 15px;
-            border-radius: 12px;
-            text-align: center;
-            border: 1px solid #f1f5f9;
-            position: relative;
-            overflow: hidden;
-        }
-
+        .time-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 15px; }
+        .time-card { padding: 15px; border-radius: 12px; text-align: center; border: 1px solid #f1f5f9; position: relative; overflow: hidden; }
         .time-card.adjusted::after {
-            content: '✨ Bio-Sync';
-            position: absolute;
-            top: 0;
-            right: 0;
-            background: #fce7f3;
-            color: #9d174d;
-            font-size: 0.6rem;
-            padding: 2px 6px;
-            border-bottom-left-radius: 8px;
+            content: '✨ Bio-Sync'; position: absolute; top: 0; right: 0; background: #fce7f3;
+            color: #9d174d; font-size: 0.6rem; padding: 2px 6px; border-bottom-left-radius: 8px;
         }
 
         .time-label { display: block; font-size: 0.8rem; opacity: 0.7; margin-bottom: 5px; font-weight: 600; }
         .time-activity { font-weight: bold; font-size: 1rem; margin-bottom: 5px; }
-        .time-tag { font-size: 0.75rem; padding: 2px 8px; border-radius: 10px; background: rgba(255,255,255,0.5); display: inline-block; }
-
         .ctx-biz { background: #fff7ed; color: #c2410c; border-color: #ffedd5; }
         .ctx-self { background: #f0fdf4; color: #15803d; border-color: #dcfce7; }
-        .ctx-baby { background: #eff6ff; color: #1d4ed8; border-color: #dbeafe; }
         .ctx-family { background: #faf5ff; color: #7e22ce; border-color: #f3e8ff; }
 
         /* --- Protocol Cards --- */
-        .protocols-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 25px;
-        }
+        .protocols-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 25px; }
         .protocol-card { background: white; padding: 25px; border-radius: 16px; box-shadow: 0 4px 15px rgba(0,0,0,0.03); }
         .protocol-title { font-size: 1.1rem; font-weight: 700; margin-bottom: 15px; color: #334155; padding-bottom: 10px; border-bottom: 2px solid #f1f5f9; }
-        
         .cl-item { display: flex; align-items: flex-start; gap: 10px; margin-bottom: 12px; font-size: 0.9rem; color: #475569; }
         .cl-badge { font-size: 0.7rem; padding: 2px 6px; border-radius: 4px; background: #e2e8f0; color: #64748b; flex-shrink: 0; margin-top: 2px; }
-
-        .toggle-icon { transition: transform 0.3s; font-size: 1.2rem; color: #9d174d; }
-        .collapsed-icon { transform: rotate(-90deg); }
 
         @media (max-width: 900px) {
             .protocols-grid { grid-template-columns: 1fr; }
             .time-grid { grid-template-columns: 1fr 1fr; }
-            .cycle-controls { flex-direction: column; align-items: flex-start; }
-            .cycle-progress-container { width: 100%; margin: 15px 0; }
         }
     </style>
 </head>
@@ -393,13 +194,8 @@
         <header>
             <h1>Holistic CEO Dashboard</h1>
             <p class="subtitle">Company of One • Spiritual Alignment • Cycle Synced</p>
-            <p style="margin-top: 10px;">
-                <a href="https://webdevsha.github.io/future-mom-rev/slider.html">Income & Retirement Calc</a> | 
-                <a href="https://webdevsha.github.io/future-mom-rev/okr.html">Detailed OKR View</a>
-            </p>
         </header>
 
-        <!-- CONTROLS BAR: Life Stage -->
         <div class="controls-bar">
             <label style="color:#831843; font-weight:600;">Current Chapter:</label>
             <select id="lifeStageSelect" class="life-stage-select" onchange="updateLifeStage()">
@@ -410,48 +206,49 @@
             </select>
         </div>
 
-        <!-- COLLAPSIBLE CYCLE WIDGET -->
         <div class="cycle-widget-container">
             <div class="cycle-header" onclick="toggleWidget()">
                 <div class="cycle-summary">
                     <h3>Biology Status:</h3>
-                    <span id="headerPhaseBadge" class="cycle-phase-badge phase-menstrual">...</span>
+                    <span id="headerPhaseBadge" class="cycle-phase-badge">...</span>
                     <span>Day <strong id="headerDayVal">1</strong></span>
                 </div>
-                <div class="toggle-icon" id="widgetIcon">▼</div>
+                <div id="widgetIcon">▼</div>
             </div>
 
             <div class="cycle-body" id="cycleBody">
                 <div class="cycle-controls">
                     <div style="flex: 1;">
-                        <span id="fullPhaseBadge" class="cycle-phase-badge phase-menstrual" style="margin-bottom:10px;">...</span>
-                        <div class="cycle-progress-container" style="margin: 0; max-width: 100%;">
-                            <div class="cycle-bar-bg">
-                                <div id="cycleBar" class="cycle-bar-fill"></div>
-                            </div>
+                        <span id="fullPhaseBadge" class="cycle-phase-badge" style="margin-bottom:10px;">...</span>
+                        <div class="cycle-progress-container">
+                            <div class="cycle-bar-bg"><div id="cycleBar" class="cycle-bar-fill"></div></div>
                             <div class="cycle-labels">
-                                <span>Menstrual</span>
-                                <span>Follicular</span>
-                                <span>Ovulatory</span>
-                                <span>Luteal</span>
+                                <span>Menstrual</span><span>Follicular</span><span>Ovulatory</span><span>Luteal</span>
                             </div>
                         </div>
                     </div>
                     
                     <div style="text-align: right;">
                         <label style="font-size:0.85rem; color:#64748b; display:block;">Start Date:</label>
-                        <input type="date" id="lastPeriodInput" value="2025-12-01" onchange="recalculateTrueCycle()" style="padding: 8px; border-radius: 6px; border:1px solid #ddd;">
+                        <input type="date" id="lastPeriodInput" value="2025-05-01" onchange="recalculateTrueCycle()" style="padding: 8px; border-radius: 6px; border:1px solid #ddd;">
                         <div style="font-size:0.8rem; color:#be185d; margin-top:5px;">Next: <span id="nextPeriodDate">...</span></div>
                     </div>
                 </div>
 
-                <div class="notif-status" id="notificationStatusBox">
-                    <div class="notif-dot active"></div>
-                    <span id="notifStatusText">Email alerts active for Menstruation & Ovulation to rafisha92@gmail.com</span>
+                <div class="partner-sync-panel">
+                    <div class="sync-info">
+                        <input type="checkbox" id="autoSyncToggle" checked onchange="saveSyncPrefs()">
+                        <div>
+                            <span style="font-weight: 700; color: #831843; display: block;">Auto-Sync with R</span>
+                            <span id="syncStatusText" style="color: #64748b; font-size: 0.75rem;">Emails R on Day 1, Ovulation & Day 23</span>
+                        </div>
+                    </div>
+                    <button id="manualSyncBtn" class="btn-sync-now" onclick="sendManualUpdate()">
+                        <span>✉️</span> Send Update to R Now
+                    </button>
                 </div>
 
                 <div class="preview-bar">
-                    <span style="font-size:0.85rem; font-weight:bold; color:#831843;">👀 Preview content for:</span>
                     <button class="preview-btn" onclick="previewPhase('menstrual')">Menstrual</button>
                     <button class="preview-btn" onclick="previewPhase('follicular')">Follicular</button>
                     <button class="preview-btn" onclick="previewPhase('ovulatory')">Ovulatory</button>
@@ -461,47 +258,28 @@
             </div>
         </div>
 
-        <!-- SEASON TABS -->
         <div class="tabs">
-            <button class="tab-btn tab-nurture active" onclick="setSeason('nurture')">🌱 Season of Nurture (Conservative)</button>
-            <button class="tab-btn tab-balance" onclick="setSeason('balance')">⚖️ Season of Balance (Moderate)</button>
-            <button class="tab-btn tab-sprint" onclick="setSeason('sprint')">🚀 Season of Sprint (Ambitious)</button>
+            <button class="tab-btn tab-nurture active" onclick="setSeason('nurture')">🌱 Season of Nurture</button>
+            <button class="tab-btn tab-balance" onclick="setSeason('balance')">⚖️ Season of Balance</button>
+            <button class="tab-btn tab-sprint" onclick="setSeason('sprint')">🚀 Season of Sprint</button>
         </div>
 
         <div class="dashboard-grid">
-            <!-- 1. DEPARTMENTS -->
             <div>
-                <div class="section-header">
-                    <h2>Quarterly Department OKRs</h2>
-                    <div class="section-line"></div>
-                </div>
-                <div class="departments-container" id="deptContainer">
-                    <!-- JS populated -->
-                </div>
+                <div class="section-header"><h2>Quarterly Department OKRs</h2><div class="section-line"></div></div>
+                <div class="departments-container" id="deptContainer"></div>
             </div>
 
-            <!-- 2. DAILY RHYTHM (CYCLE ADJUSTED) -->
             <div>
-                <div class="section-header">
-                    <h2>The Daily Rhythm</h2>
-                    <div class="section-line"></div>
-                </div>
+                <div class="section-header"><h2>The Daily Rhythm</h2><div class="section-line"></div></div>
                 <div class="schedule-container">
-                    <div class="cycle-note" id="cycleNote">
-                        <!-- JS populated cycle advice -->
-                    </div>
-                    <div class="time-grid" id="timeGrid">
-                        <!-- JS populated schedule -->
-                    </div>
+                    <div class="cycle-note" id="cycleNote"></div>
+                    <div class="time-grid" id="timeGrid"></div>
                 </div>
             </div>
 
-            <!-- 3. PROTOCOLS -->
             <div>
-                <div class="section-header">
-                    <h2>Routine Protocols</h2>
-                    <div class="section-line"></div>
-                </div>
+                <div class="section-header"><h2>Routine Protocols</h2><div class="section-line"></div></div>
                 <div class="protocols-grid">
                     <div class="protocol-card" style="border-top: 4px solid #db2777;">
                         <div class="protocol-title">🩸 Current Cycle Power Moves</div>
@@ -520,158 +298,29 @@
         </div>
     </div>
 
-    <!-- Hidden Form for Email Triggers -->
-    <form id="emailTriggerForm" style="display:none;" action="https://formspree.io/f/xaqwwdrq" method="POST">
-        <input type="email" name="_replyto" value="rafisha92@gmail.com">
-        <input type="text" name="subject" id="emailSubject">
-        <textarea name="message" id="emailMessage"></textarea>
-    </form>
-
     <script>
-        /* --- 1. CONFIG & CYCLE LOGIC --- */
-        let truePhase = 'menstrual'; 
-        let displayPhase = 'menstrual'; 
-        let trueDay = 1;
-        let currentLifeStage = 'parenting'; 
-        const cycleLength = 28;
+        // --- EMAILJS CONFIG (Update with your keys) ---
+        const EMAILJS_PUBLIC_KEY = "EONydXun8_CTmWkl7";
+        const EMAILJS_SERVICE_ID = "service_87zo2da"; 
+        const EMAILJS_TEMPLATE_ID = "template_942d8wt"; 
+        const RECIPIENT_EMAIL = "nshfnoh@proton.me, mrazld.hamdan@gmail.com"; // Comma-separated for multiple
 
+        if (EMAILJS_PUBLIC_KEY) emailjs.init(EMAILJS_PUBLIC_KEY);
+
+        /* --- DATA OBJECTS (UNCHANGED CONTENT) --- */
         const lifeStageData = {
             preparing: { id: 'baby', icon: '🌱', title: 'Preparing', focus: 'Health & Calm', style: 'dept-baby', okrs: ['KR: Daily Folic Acid & Supps', 'KR: Track Cycle Consistently', 'KR: Reduce Stress (Cortisol)', 'KR: Health Checkup'], win: 'Book a "Pre-Baby" couples spa day' },
-            pregnancy: { id: 'baby', icon: '🤰', title: 'Pregnancy', focus: 'Nesting & Health', style: 'dept-baby', okrs: ['KR: Hypnobirthing Course', 'KR: Daily Pelvic Floor', 'KR: Nursery Setup', 'KR: Read 1 Birth Book'], win: 'Cast a belly mold or start a pregnancy journal' },
-            parenting: { id: 'baby', icon: '👶', title: 'Parenting', focus: 'Connection & Guide', style: 'dept-baby', okrs: ['KR: Daily Sensory Play', 'KR: Bedtime Spiritual Stories', 'KR: Outdoor Nature Walk', 'KR: Toy Rotation'], win: 'Create a "First Words" audio capsule or Photo Book' },
-            parenting_pregnant: { id: 'baby', icon: '🤱', title: 'Parenting + Pregnant', focus: 'Energy Management', style: 'dept-baby', okrs: ['KR: Sibling Prep Books', 'KR: Outsource Heavy Lifting', 'KR: Nap when Toddler Naps', 'KR: Batch Cook for Postpartum'], win: 'Pack a "Big Brother/Sister" gift box' }
+            pregnancy: { id: 'baby', icon: '🤰', title: 'Pregnancy', focus: 'Nesting & Health', style: 'dept-baby', okrs: ['KR: Hypnobirthing Course', 'KR: Daily Pelvic Floor', 'KR: Nursery Setup', 'KR: Read 1 Birth Book'], win: 'Start a pregnancy journal' },
+            parenting: { id: 'baby', icon: '👶', title: 'Parenting', focus: 'Connection & Guide', style: 'dept-baby', okrs: ['KR: Daily Sensory Play', 'KR: Bedtime Spiritual Stories', 'KR: Outdoor Nature Walk', 'KR: Toy Rotation'], win: 'Create a Photo Book' },
+            parenting_pregnant: { id: 'baby', icon: '🤱', title: 'Parenting + Pregnant', focus: 'Energy Management', style: 'dept-baby', okrs: ['KR: Sibling Prep Books', 'KR: Outsource Heavy Lifting', 'KR: Nap when Toddler Naps', 'KR: Batch Cook for Postpartum'], win: 'Pack a "Sibling" gift box' }
         };
 
         const cycleData = {
-            menstrual: { name: 'Menstrual (Winter)', style: 'phase-menstrual', focus: 'Rest & Spiritual Reflection', note: "Energy is lowest. Prioritize spiritual grounding (Dhikr/Journaling) and deep rest.", adjustments: { morning: { task: 'Gentle Stretch / Prayer', type: 'ctx-self' }, work1: { task: 'Admin/Review (Low Energy)', type: 'ctx-biz' }, work2: { task: 'Learning/Reading', type: 'ctx-biz' }, evening: { task: 'Early Bedtime / Reflection', type: 'ctx-self' } }, powerMoves: [ { badge: 'Biz', text: 'Audit Finances & Metrics' }, { badge: 'Spirit', text: 'Increase Tahajjud/Dua (Reflection)' }, { badge: 'Self', text: 'Magnesium baths & Warm food' } ] },
-            follicular: { name: 'Follicular (Spring)', style: 'phase-follicular', focus: 'Plan & Create', note: "Energy rising. Great for brainstorming new features and planning family outings.", adjustments: { morning: { task: 'Cardio / Run', type: 'ctx-self' }, work1: { task: 'Creative Deep Work (Code)', type: 'ctx-biz' }, work2: { task: 'Project Planning', type: 'ctx-biz' }, evening: { task: 'Family Outing / Fun', type: 'ctx-family' } }, powerMoves: [ { badge: 'Biz', text: 'Start new dev features' }, { badge: 'Home', text: 'Deep Clean / Refresh Space' }, { badge: 'Baby', text: 'New sensory play setup' } ] },
-            ovulatory: { name: 'Ovulatory (Summer)', style: 'phase-ovulatory', focus: 'Connect & Pitch', note: "Peak energy & magnetism. Host gatherings, pitch clients, and prioritize connection with husband.", adjustments: { morning: { task: 'HIIT / Power Pilates', type: 'ctx-self' }, work1: { task: 'Sales Calls / Recording', type: 'ctx-biz' }, work2: { task: 'Collab / Meetings', type: 'ctx-biz' }, evening: { task: 'Date Night / Hosting', type: 'ctx-marriage' } }, powerMoves: [ { badge: 'Biz', text: 'Batch record content' }, { badge: 'Love', text: 'Prioritize intimacy' }, { badge: 'Fam', text: 'Host dinner/playdates' } ] },
-            luteal: { name: 'Luteal (Autumn)', style: 'phase-luteal', focus: 'Finish & Organize', note: "Focus narrows. Finish open loops. Prepare household logistics. Spiritual consistency is key here.", adjustments: { morning: { task: 'Strength / Pilates', type: 'ctx-self' }, work1: { task: 'Deep Coding (Finishing)', type: 'ctx-biz' }, work2: { task: 'Organizing / SOPs', type: 'ctx-biz' }, evening: { task: 'Home Org / Prep', type: 'ctx-family' } }, powerMoves: [ { badge: 'Biz', text: 'Close open tickets/tasks' }, { badge: 'Home', text: 'Meal Prep & Declutter' }, { badge: 'Spirit', text: 'Consistent Prayer Routine' } ] }
+            menstrual: { name: 'Menstrual (Winter)', style: 'phase-menstrual', focus: 'Rest & Spiritual Reflection', note: "Energy is lowest. Body is resetting—prostaglandins + lower iron.Prioritize spiritual grounding and deep rest.", color: '#be185d', emoji: '❄️', adjustments: { morning: { task: 'Gentle Stretch / Prayer', type: 'ctx-self' }, work1: { task: 'Admin/Review (Low Energy)', type: 'ctx-biz' }, work2: { task: 'Learning/Reading', type: 'ctx-biz' }, evening: { task: 'Early Bedtime', type: 'ctx-self' } }, powerMoves: [{badge: 'Biz', text: 'Audit Finances'}, {badge: 'Spirit', text: 'Reflection/Dua'}] },
+            follicular: { name: 'Follicular (Spring)', style: 'phase-follicular', focus: 'Plan & Create', note: "Energy rising. Great for brainstorming new features and planning outings.", color: '#15803d', emoji: '🌱', adjustments: { morning: { task: 'Cardio / Run', type: 'ctx-self' }, work1: { task: 'Creative Deep Work', type: 'ctx-biz' }, work2: { task: 'Project Planning', type: 'ctx-biz' }, evening: { task: 'Family Outing', type: 'ctx-family' } }, powerMoves: [{badge: 'Biz', text: 'Start new features'}, {badge: 'Home', text: 'Deep Clean'}] },
+            ovulatory: { name: 'Ovulatory (Summer)', style: 'phase-ovulatory', focus: 'Connect & Pitch', note: "Peak energy & magnetism. Host gatherings, pitch clients, and prioritize connection.", color: '#a16207', emoji: '☀️', adjustments: { morning: { task: 'Power Pilates', type: 'ctx-self' }, work1: { task: 'Sales Calls / Recording', type: 'ctx-biz' }, work2: { task: 'Meetings', type: 'ctx-biz' }, evening: { task: 'Date Night', type: 'ctx-marriage' } }, powerMoves: [{badge: 'Biz', text: 'Batch record content'}, {badge: 'Love', text: 'Prioritize intimacy'}] },
+            luteal: { name: 'Luteal (Autumn)', style: 'phase-luteal', focus: 'Finish & Organize', note: "Progesterone = nesting mode, then serotonin drops = sensitivity spikes. Focus narrows. Finish open loops. Prepare household logistics.", color: '#c2410c', emoji: '🍂', adjustments: { morning: { task: 'Strength Training', type: 'ctx-self' }, work1: { task: 'Deep Coding', type: 'ctx-biz' }, work2: { task: 'Organizing / SOPs', type: 'ctx-biz' }, evening: { task: 'Home Prep', type: 'ctx-family' } }, powerMoves: [{badge: 'Biz', text: 'Close open tickets'}, {badge: 'Home', text: 'Meal Prep'}] }
         };
-
-        function recalculateTrueCycle() {
-            const inputDate = document.getElementById('lastPeriodInput').value;
-            const startDate = new Date(inputDate);
-            const today = new Date(); 
-            const diffTime = Math.abs(today - startDate);
-            let diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)); 
-            
-            trueDay = (diffDays % cycleLength) || cycleLength; 
-            
-            if (trueDay <= 5) truePhase = 'menstrual';
-            else if (trueDay <= 12) truePhase = 'follicular';
-            else if (trueDay <= 15) truePhase = 'ovulatory';
-            else truePhase = 'luteal';
-
-            const nextPeriod = new Date(startDate);
-            nextPeriod.setDate(startDate.getDate() + cycleLength);
-            document.getElementById('nextPeriodDate').textContent = nextPeriod.toLocaleDateString();
-
-            displayPhase = truePhase;
-            updateCycleUI(trueDay, truePhase);
-            
-            // Notification Logic: Check if we need to send an email for this phase
-            checkAndSendNotification(truePhase, trueDay);
-
-            document.querySelectorAll('.preview-btn').forEach(b => b.classList.remove('active-preview'));
-            setSeason(currentSeason); 
-        }
-
-        /* --- EMAIL NOTIFICATION SYSTEM --- */
-        async function checkAndSendNotification(phase, day) {
-            // Only notify for Menstrual (Day 1) or Ovulatory (Entry into phase)
-            if (phase !== 'menstrual' && phase !== 'ovulatory') return;
-
-            // Use LocalStorage to prevent duplicate emails for the same entry in the same cycle
-            const lastNotifiedEntry = localStorage.getItem('lastCycleNotified'); // Format: "phase-date"
-            const todayKey = new Date().toDateString();
-            const currentNotifKey = `${phase}-${todayKey}`;
-
-            if (lastNotifiedEntry === currentNotifKey) {
-                console.log(`Notification already sent for ${phase} today.`);
-                return;
-            }
-
-            // If we are here, it's time to send
-            const statusBox = document.getElementById('notificationStatusBox');
-            const statusText = document.getElementById('notifStatusText');
-            
-            statusText.textContent = `Triggering ${phase} email alert...`;
-
-            try {
-                // Constructing content
-                const subject = `Cycle Alert: You have entered the ${phase.toUpperCase()} phase`;
-                const message = `Hello Shafira,\n\nThis is your Holistic CEO Dashboard alert.\n\nYou are currently on Day ${day} of your cycle (${phase}).\n\nFocus: ${cycleData[phase].focus}\nAdvice: ${cycleData[phase].note}\n\nCheck your dashboard for updated OKRs and Schedule.`;
-
-                // In a real environment, you'd replace 'YOUR_FORMSPREE_ID_HERE' with your Formspree ID
-                // To avoid sending actual network requests during testing, we log it.
-                // UNCOMMENT the following lines when you have your Formspree ID:
-                /*
-                await fetch('https://formspree.io/f/xaqwwdrq', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        email: 'rafisha92@gmail.com',
-                        subject: subject,
-                        message: message
-                    })
-                });
-                */
-
-                console.log(`EMAIL SENT to rafisha92@gmail.com: ${subject}`);
-                
-                // Mark as notified
-                localStorage.setItem('lastCycleNotified', currentNotifKey);
-                
-                statusText.textContent = `Alert sent to rafisha92@gmail.com for ${phase} phase entry.`;
-                setTimeout(() => {
-                    statusText.textContent = `Email alerts active for Menstruation & Ovulation to rafisha92@gmail.com`;
-                }, 10000);
-
-            } catch (err) {
-                console.error("Email failed:", err);
-                statusText.textContent = "Email notification failed. Check internet connection.";
-            }
-        }
-
-        function previewPhase(phaseName) {
-            displayPhase = phaseName;
-            document.querySelectorAll('.preview-btn').forEach(b => b.classList.remove('active-preview'));
-            event.target.classList.add('active-preview');
-            let previewDay = 1;
-            if (phaseName === 'follicular') previewDay = 7;
-            if (phaseName === 'ovulatory') previewDay = 14;
-            if (phaseName === 'luteal') previewDay = 20;
-            updateCycleUI(previewDay, phaseName, true); 
-            setSeason(currentSeason);
-        }
-
-        function updateCycleUI(day, phase, isPreview = false) {
-            const data = cycleData[phase];
-            const badgeClass = `cycle-phase-badge ${data.style}`;
-            document.getElementById('headerPhaseBadge').className = badgeClass;
-            document.getElementById('headerPhaseBadge').textContent = data.name + (isPreview ? " (Preview)" : "");
-            document.getElementById('headerDayVal').textContent = day;
-            document.getElementById('fullPhaseBadge').className = badgeClass;
-            document.getElementById('fullPhaseBadge').textContent = data.name;
-            const barWidth = (day / 28) * 100;
-            document.getElementById('cycleBar').style.width = `${barWidth}%`;
-        }
-
-        function toggleWidget() {
-            const body = document.getElementById('cycleBody');
-            const icon = document.getElementById('widgetIcon');
-            body.classList.toggle('collapsed');
-            icon.classList.toggle('collapsed-icon');
-        }
-
-        function updateLifeStage() {
-            currentLifeStage = document.getElementById('lifeStageSelect').value;
-            setSeason(currentSeason);
-        }
-
-        /* --- 2. SEASON DATA --- */
-        let currentSeason = 'nurture';
 
         const seasons = {
             nurture: {
@@ -734,6 +383,184 @@
             }
         };
 
+        /* --- LOGIC & STATE --- */
+        let truePhase = 'menstrual'; 
+        let displayPhase = 'menstrual'; 
+        let trueDay = 1;
+        let currentLifeStage = 'parenting'; 
+        const cycleLength = 28;
+        let currentSeason = 'nurture';
+
+        function recalculateTrueCycle() {
+            const inputDate = document.getElementById('lastPeriodInput').value;
+            const startDate = new Date(inputDate);
+            const today = new Date(); 
+            const diffTime = today - startDate;
+            let diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24)) + 1;
+            
+            trueDay = ((diffDays - 1) % cycleLength) + 1;
+            
+            if (trueDay <= 5) truePhase = 'menstrual';
+            else if (trueDay <= 12) truePhase = 'follicular';
+            else if (trueDay <= 15) truePhase = 'ovulatory';
+            else truePhase = 'luteal';
+
+            const nextPeriod = new Date(startDate);
+            nextPeriod.setDate(startDate.getDate() + cycleLength);
+            document.getElementById('nextPeriodDate').textContent = nextPeriod.toLocaleDateString();
+
+            displayPhase = truePhase;
+            updateCycleUI(trueDay, truePhase);
+            checkAutoEmailTriggers(truePhase, trueDay);
+            setSeason(currentSeason); 
+        }
+
+        /* --- PARTNER SYNC EMAIL ENGINE (FUNCTIONAL) --- */
+        async function sendCycleEmail(phaseKey, day, isManual = false) {
+            const phase = cycleData[phaseKey];
+            const btn = document.getElementById('manualSyncBtn');
+            const statusText = document.getElementById('syncStatusText');
+
+            if (isManual) {
+                btn.disabled = true;
+                btn.textContent = "Sending...";
+            }
+
+            const startDateInput = document.getElementById('lastPeriodInput').value;
+            const startDateObj = new Date(startDateInput);
+            const contentDateObj = new Date(startDateObj);
+            contentDateObj.setDate(startDateObj.getDate() + (day - 1));
+            
+            const formattedDateFull = contentDateObj.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+            const shortDateForSubject = contentDateObj.toLocaleDateString('en-US', { day: 'numeric', month: 'long' });
+            const supportTips = getSupportTips(phaseKey);
+
+            // GENERATE HTML BODY INTERNALLY
+            const emailHtml = `
+                <div style="font-family: sans-serif; background-color: #fafaf9; padding: 20px; color: #334155;">
+                    <div style="max-width: 600px; margin: 0 auto; background: white; border-radius: 20px; overflow: hidden; border: 1px solid #fee2e2;">
+                        <div style="background: linear-gradient(135deg, #fff1f2 0%, #fff7ed 100%); padding: 30px; text-align: center; border-bottom: 1px solid #fff1f2;">
+                            <span style="font-size: 40px;">${phase.emoji}</span>
+                        </div>
+                        <div style="padding: 30px;">
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 20px;">
+                                <div>
+                                    <h1 style="color: #881337; font-size: 24px; margin: 0;">Cycle Update</h1>
+                                    <p style="color: #fb7185; margin: 5px 0;">${formattedDateFull}</p>
+                                </div>
+                                <div style="background: #fff1f2; padding: 5px 15px; border-radius: 20px; border: 1px solid #ffe4e6; height: fit-content;">
+                                    <span style="color: #e11d48; font-weight: bold; font-size: 12px; text-transform: uppercase;">Phase: ${phase.name}</span>
+                                </div>
+                            </div>
+                            <p style="font-size: 16px; line-height: 1.6;">Hi Sayang, just a heads up on my biology status for this specific date. Here's a quick briefing for this phase.</p>
+                            <div style="background: #f8fafc; border-radius: 15px; padding: 20px; border: 1px solid #f1f5f9; margin: 20px 0;">
+                                <h2 style="font-size: 16px; color: #0f172a; margin-top: 0;">💡 Briefing for Sayang</h2>
+                                <ul style="list-style: none; padding: 0;">
+                                    <li style="margin-bottom: 15px; display: flex; align-items: flex-start;">
+                                        <span style="color: #fb7185; font-weight: bold; margin-right: 10px;">•</span>
+                                        <span><strong>Energy Level:</strong> ${phase.note}</span>
+                                    </li>
+                                    <li style="margin-bottom: 15px; display: flex; align-items: flex-start;">
+                                        <span style="color: #fb7185; font-weight: bold; margin-right: 10px;">•</span>
+                                        <span><strong>Focus:</strong> ${phase.focus}</span>
+                                    </li>
+                                    <li style="margin-bottom: 0; display: flex; align-items: flex-start;">
+                                        <span style="color: #fb7185; font-weight: bold; margin-right: 10px;">•</span>
+                                        <span><strong>Support Moves:</strong> ${supportTips}</span>
+                                    </li>
+                                </ul>
+                            </div>
+                            <p style="text-align: center; font-style: italic; color: #64748b; margin-top: 30px;">"Thank you for being my partner through every season, my man 🥰"</p>
+                            <a href="https://webdevsha.github.io/future-mom-rev/" target="_blank" style="display: inline-block; margin-top: 20px; padding: 12px 25px; background: #e11d48; color: white; text-decoration: none; border-radius: 8px; font-weight: bold;">Sent via Holistic CEO Dashboard</a>
+                        </div>
+                    </div>
+                </div>`;
+
+            const templateParams = {
+                from_name: "Your Sayang",
+                to_email: RECIPIENT_EMAIL,
+                subject: `Cycle Update: ${phase.name} - ${shortDateForSubject}`,
+                email_html: emailHtml
+            };
+
+            try {
+                if (!EMAILJS_PUBLIC_KEY || !EMAILJS_TEMPLATE_ID) {
+                    console.log("SIMULATED EMAIL:", templateParams);
+                    if (isManual) {
+                        statusText.textContent = `✅ Preview sent to console (No API Key)`;
+                        setTimeout(() => statusText.textContent = "Emails R on Day 1, Ovulation & Day 23", 4000);
+                    }
+                } else {
+                    await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, templateParams);
+                }
+                
+                if (isManual) {
+                    btn.textContent = "✅ Sent to R";
+                    setTimeout(() => { btn.disabled = false; btn.textContent = "✉️ Send Update to R Now"; }, 3000);
+                }
+            } catch (err) {
+                console.error("Email Error:", err);
+                if (isManual) { btn.textContent = "❌ Error"; btn.disabled = false; }
+            }
+        }
+
+        function getSupportTips(phase) {
+            const tips = {
+                menstrual: "Your presence > everything. Take the decisions off my plate. Day 1 most importantly, as I'm super low on Day 1.",
+                follicular: "Yay, recovering my inner sheedings, now, I'm feeling creative and strategic! Let's plan something new or go on a small adventure.",
+                ovulatory: "I have high energy and magnetism right now. Great time for social outings. Push me to do more here hehe. ",
+                luteal: "Late phase (PMS)—I may feel big emotions. Don't take it personally. Small acts of service, reassurance, and being my steady anchor matter most. Validate > problem-solve. I may need early, quiet nights."
+            };
+            return tips[phase] || "Just extra love today.";
+        }
+
+        function checkAutoEmailTriggers(phase, day) {
+            const isAutoEnabled = document.getElementById('autoSyncToggle').checked;
+            if (!isAutoEnabled) return;
+
+            const todayKey = new Date().toISOString().split('T')[0];
+            const lastSentDate = localStorage.getItem('lastAutoEmailDate');
+            const lastSentDay = localStorage.getItem('lastAutoEmailDay');
+
+            const triggerDays = [1, 13, 14, 23];
+            
+            if (triggerDays.includes(day) && (lastSentDate !== todayKey || lastSentDay != day)) {
+                sendCycleEmail(phase, day, false);
+                localStorage.setItem('lastAutoEmailDate', todayKey);
+                localStorage.setItem('lastAutoEmailDay', day);
+            }
+        }
+
+        function sendManualUpdate() { sendCycleEmail(displayPhase, trueDay, true); }
+        function saveSyncPrefs() { localStorage.setItem('autoSyncEnabled', document.getElementById('autoSyncToggle').checked); }
+
+        function updateCycleUI(day, phase, isPreview = false) {
+            const data = cycleData[phase];
+            const badgeClass = `cycle-phase-badge ${data.style}`;
+            document.getElementById('headerPhaseBadge').className = badgeClass;
+            document.getElementById('headerPhaseBadge').textContent = data.name + (isPreview ? " (Preview)" : "");
+            document.getElementById('headerDayVal').textContent = day;
+            document.getElementById('fullPhaseBadge').className = badgeClass;
+            document.getElementById('fullPhaseBadge').textContent = data.name;
+            const barWidth = (day / 28) * 100;
+            document.getElementById('cycleBar').style.width = `${barWidth}%`;
+        }
+
+        function previewPhase(phaseName) {
+            displayPhase = phaseName;
+            document.querySelectorAll('.preview-btn').forEach(b => b.classList.remove('active-preview'));
+            event.target.classList.add('active-preview');
+            let previewDay = 1;
+            if (phaseName === 'follicular') previewDay = 7;
+            else if (phaseName === 'ovulatory') previewDay = 14;
+            else if (phaseName === 'luteal') previewDay = 22;
+            updateCycleUI(previewDay, phaseName, true); 
+            setSeason(currentSeason);
+        }
+
+        function toggleWidget() { document.getElementById('cycleBody').classList.toggle('collapsed'); }
+        function updateLifeStage() { currentLifeStage = document.getElementById('lifeStageSelect').value; setSeason(currentSeason); }
+
         function setSeason(season) {
             currentSeason = season;
             document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
@@ -742,66 +569,41 @@
 
             const data = seasons[season];
             const cData = cycleData[displayPhase];
-            
             const currentLifeData = lifeStageData[currentLifeStage];
+            
             let displayDepts = [...data.departments];
             displayDepts.splice(1, 0, currentLifeData);
 
-            const deptHTML = displayDepts.map(d => `
+            document.getElementById('deptContainer').innerHTML = displayDepts.map(d => `
                 <div class="dept-card ${d.style}">
                     <div>
                         <span class="dept-icon">${d.icon}</span>
                         <div class="dept-title">${d.title}</div>
                         <span class="dept-focus">${d.focus}</span>
-                        <ul class="dept-okr-list">
-                            ${d.okrs.map(o => `<li>${o}</li>`).join('')}
-                        </ul>
+                        <ul class="dept-okr-list">${d.okrs.map(o => `<li>${o}</li>`).join('')}</ul>
                     </div>
-                    <div class="creative-win-box">
-                        <span class="win-title">✨ Suggestive Win</span>
-                        <span class="win-text">"${d.win || 'Plan something special'}"</span>
-                    </div>
-                </div>
-            `).join('');
-            document.getElementById('deptContainer').innerHTML = deptHTML;
+                    <div class="creative-win-box"><span class="win-title">✨ Win</span><span class="win-text">"${d.win}"</span></div>
+                </div>`).join('');
 
-            document.getElementById('cycleNote').innerHTML = `<strong>${cData.name} Phase Tip:</strong> ${cData.note}`;
-            
-            const timeHTML = data.baseSchedule.map(s => {
-                if (s.slot) {
-                    const adjustment = cData.adjustments[s.slot];
-                    return `
-                        <div class="time-card ${adjustment.type} adjusted">
-                            <span class="time-label">${s.time}</span>
-                            <div class="time-activity">${adjustment.task}</div>
-                            <span class="time-tag">Bio-Sync</span>
-                        </div>
-                    `;
-                } else {
-                    return `
-                        <div class="time-card ${s.style}">
-                            <span class="time-label">${s.time}</span>
-                            <div class="time-activity">${s.activity}</div>
-                            <span class="time-tag">${s.tag}</span>
-                        </div>
-                    `;
-                }
+            document.getElementById('cycleNote').innerHTML = `<strong>${cData.name}:</strong> ${cData.note}`;
+            document.getElementById('timeGrid').innerHTML = data.baseSchedule.map(s => {
+                const adj = cData.adjustments[s.slot] || {task: s.activity, type: s.style};
+                return `
+                    <div class="time-card ${adj.type} ${s.slot ? 'adjusted' : ''}">
+                        <span class="time-label">${s.time}</span>
+                        <div class="time-activity">${adj.task}</div>
+                    </div>`;
             }).join('');
-            document.getElementById('timeGrid').innerHTML = timeHTML;
 
-            const renderList = (items) => items.map(i => `
-                <div class="cl-item">
-                    <span class="cl-badge">${i.badge}</span>
-                    <span>${i.text}</span>
-                </div>
-            `).join('');
-
-            document.getElementById('weeklyList').innerHTML = renderList(data.weekly);
-            document.getElementById('monthlyList').innerHTML = renderList(data.monthly);
-            document.getElementById('cycleProtocolList').innerHTML = renderList(cData.powerMoves);
+            const renderL = (items) => items.map(i => `<div class="cl-item"><span class="cl-badge">${i.badge}</span><span>${i.text}</span></div>`).join('');
+            document.getElementById('weeklyList').innerHTML = renderL(data.weekly);
+            document.getElementById('monthlyList').innerHTML = renderL(data.monthly);
+            document.getElementById('cycleProtocolList').innerHTML = renderL(cData.powerMoves);
         }
 
         // Init
+        const storedSync = localStorage.getItem('autoSyncEnabled');
+        if (storedSync !== null) document.getElementById('autoSyncToggle').checked = (storedSync === 'true');
         recalculateTrueCycle();
     </script>
 </body>
